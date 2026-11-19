@@ -1,0 +1,1248 @@
+{
+  "1. Newsfeed / Story / Watch": [
+    {
+      "action": "HDBaiVietNewsfeed",
+      "method": "B8B090B3",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook.com/"
+      ],
+      "mfb_urls": [
+        "https://m.facebook.com/"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/"
+      ],
+      "selectors": [],
+      "legacy_markers": [
+        "mbasic"
+      ],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02",
+        "Uses mbasic.facebook.com (1 URLs)",
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDBaiVietNewsfeed2",
+      "method": "B8B090B3",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook.com/"
+      ],
+      "mfb_urls": [
+        "https://m.facebook.com/"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/"
+      ],
+      "selectors": [],
+      "legacy_markers": [
+        "mbasic"
+      ],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02",
+        "Uses mbasic.facebook.com (1 URLs)",
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDXemStory",
+      "method": "A51D2294",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/stories/?locale=en_US"
+      ],
+      "selectors": [
+        "[aria-label=\\",
+        "[aria-label^=\\",
+        "[role=\\",
+        "[id][role]"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDXemStoryChiDinh",
+      "method": "EE18B014",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/"
+      ],
+      "selectors": [
+        "[data-sigil=\\",
+        "[href=\\"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDDangStory",
+      "method": "method_89",
+      "status": "Modernized (Hub)",
+      "calls_c1": false,
+      "hubs": [
+        "AccountsCenterHub.ExecuteDangStoryWWW",
+        "AccountsCenterHub.IsSuccess"
+      ],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": [
+        "Delegates to AccountsCenterHub.ExecuteDangStoryWWW, AccountsCenterHub.IsSuccess"
+      ]
+    },
+    {
+      "action": "HDXemWatch",
+      "method": "BEAC0B29",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/video"
+      ],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02"
+      ]
+    },
+    {
+      "action": "HDTuongTacReelNgauNhien",
+      "method": "method_111",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/reel/?locale=en_US"
+      ],
+      "selectors": [
+        "[u]",
+        "[style*=\\",
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDTuongTacReelChiDinh",
+      "method": "method_112",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/reel/"
+      ],
+      "selectors": [
+        "//*[text()=\\",
+        "[u]",
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDDangReel",
+      "method": "method_75",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/profile.php?sk=reels_tab",
+        "https://www.facebook.com",
+        "https://www.facebook.com/reels/create/?locale=en_US"
+      ],
+      "selectors": [
+        "//form//*[text()=\\",
+        "//div[@role=\\",
+        "//form//input[@type=\\",
+        "//*[text()=\\",
+        "[role=\\",
+        ".txt",
+        "[href=\\",
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDTuongTacLivestream",
+      "method": "method_47",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/"
+      ],
+      "selectors": [
+        "//*[@role=\\",
+        "//*[@aria-label=\\",
+        "//*[contains(text(),\\",
+        "...",
+        "[aria-label^=\\",
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    }
+  ],
+  "2. Bạn bè": [
+    {
+      "action": "HDKetBanGoiY",
+      "method": "F098622C",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/friends/center/suggestions/?mff_nav=1&ref=bookmarks?Location=en_US"
+      ],
+      "www_urls": [],
+      "selectors": [
+        "//*[contains(@data-sigil,\\",
+        "[data-visualcompletion=\\",
+        "[data-sigil=\\"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDKetBanTheoTuKhoa",
+      "method": "method_90",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/search/people/?q="
+      ],
+      "www_urls": [],
+      "selectors": [
+        "[data-nt-switch-case*=\\",
+        "[aria-label*=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDKetBanTepUid",
+      "method": "D8B8D010",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/"
+      ],
+      "www_urls": [
+        "https://facebook.com/"
+      ],
+      "selectors": [
+        "[aria-label^=\\"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDKetBanThanhVienNhom",
+      "method": "BB8424AC",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/browse/group/members/?id="
+      ],
+      "www_urls": [
+        "https://www.facebook.com/groups/"
+      ],
+      "selectors": [
+        "//div[not(@aria-disabled=\\",
+        "//div[@role=\\",
+        "//span[@id]",
+        "[data-sigil=\\"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDKetBanVoiBanBeCuaUid",
+      "method": "method_106",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/"
+      ],
+      "selectors": [
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDKetBanNewfeed",
+      "method": "FF885FA2",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/home.php#"
+      ],
+      "www_urls": [],
+      "selectors": [
+        "[data-sigil=\\",
+        "[data-store*=\\"
+      ],
+      "legacy_markers": [
+        "data-sigil",
+        "data-store"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDXacNhanKetBan",
+      "method": "D7BE8001",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook.com/friends/center/requests/all",
+        "https://mbasic.facebook.com",
+        "https://mbasic.facebook.com/"
+      ],
+      "mfb_urls": [
+        "https://m.facebook.com/friends/center/requests/all"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/friends/requests"
+      ],
+      "selectors": [
+        "//a[contains(@href,\\",
+        "//div[@aria-labelledby]",
+        "//div[contains(preceding-sibling::*/@href,\\",
+        "//span[@id]",
+        "//div[not(@aria-disabled=\\",
+        "//*[@id=\\",
+        "//*[text()=\\",
+        "//div[@role='button'][.//*[contains(text(),'Xác nhận') or contains(text(),'Confirm')]]"
+      ],
+      "legacy_markers": [
+        "mbasic",
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses mbasic.facebook.com (3 URLs)",
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDHuyKetBan",
+      "method": "method_84",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/removefriend.php?friend_id="
+      ],
+      "www_urls": [
+        "https://facebook.com/",
+        "https://www.facebook.com/friends/list?Locale=en_US"
+      ],
+      "selectors": [
+        "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'unfriend')]",
+        "[name=\\",
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDHuyLoiMoiKetBan",
+      "method": "method_85",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/friends/center/requests?locale=en_US"
+      ],
+      "selectors": [
+        "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'sent request')]",
+        "[data-visualcompletion=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDChocBanBe",
+      "method": "method_104",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/pokes/?locale=en_US"
+      ],
+      "selectors": [
+        "//*[translate(text(), \\",
+        "//*[contains(@aria-label, \\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDChucMungSinhNhat",
+      "method": "method_105",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/events/birthdays/?locale=en_US"
+      ],
+      "selectors": [
+        "[role=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDBaiVietBanBe",
+      "method": "method_96",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/profile.php?id="
+      ],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02"
+      ]
+    }
+  ],
+  "3. Nhóm": [
+    {
+      "action": "HDThamGiaNhomGoiY",
+      "method": "method_70",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/groups/?ref=bookmarks"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/groups/categories/"
+      ],
+      "selectors": [
+        "[data-sigil=\\",
+        "[use=\\"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDThamGiaNhomTuKhoa",
+      "method": "method_83",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook.com/search/groups/?q="
+      ],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/groups/",
+        "https://www.facebook.com/search/groups/?q="
+      ],
+      "selectors": [
+        "#group-membership-criteria-answer-form [type=\\",
+        "[role=\\",
+        "#see_more_pager a",
+        "[aria-label^=\\",
+        "[href*=\\",
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [
+        "mbasic"
+      ],
+      "assessment": [
+        "Uses mbasic.facebook.com (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDThamGiaNhomUid",
+      "method": "method_107",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook.com"
+      ],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://facebook.com"
+      ],
+      "selectors": [
+        "[use=\\",
+        "[href*=\\",
+        "[href$=\\"
+      ],
+      "legacy_markers": [
+        "mbasic"
+      ],
+      "assessment": [
+        "Uses mbasic.facebook.com (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDRoiNhom",
+      "method": "method_81",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/groups/"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/groups/joins/?nav_source=tab&ordering=viewer_added&locale=en_US",
+        "https://facebook.com/"
+      ],
+      "selectors": [
+        "//*[@aria-label=\\",
+        "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'cancel request')]",
+        "//*[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'leave group')]",
+        "[role=\\",
+        "[href=\\",
+        "[aria-labelledby][role=\\",
+        "[name=\\",
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDMoiBanBeVaoNhom",
+      "method": "method_86",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/groups/members/search/?group_id="
+      ],
+      "www_urls": [
+        "https://facebook.com/groups/"
+      ],
+      "selectors": [
+        "[data-sigil=\\",
+        "[data-testid=\\",
+        "#addMembersInfoArea>span"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDBaiVietNhom",
+      "method": "FC9FC103",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/groups/"
+      ],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02"
+      ]
+    },
+    {
+      "action": "HDTuongTacNhomv2",
+      "method": "CB1EB439",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/groups/feed/"
+      ],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02"
+      ]
+    },
+    {
+      "action": "HDDangBai",
+      "method": "method_71",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/profile.php",
+        "https://www.facebook.com/groups/"
+      ],
+      "selectors": [
+        "...",
+        "#\\\\w+",
+        ".txt"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDShareBai",
+      "method": "method_77",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/groups/"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/groups/",
+        "https://www.facebook.com/profile.php?locale=en_US",
+        "https://www.facebook.com/",
+        "https://(.*?)facebook.com/"
+      ],
+      "selectors": [
+        "..."
+      ],
+      "legacy_markers": [],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDSpamBaiViet",
+      "method": "method_98",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook",
+        "https://mbasic.facebook.com/"
+      ],
+      "mfb_urls": [
+        "https://m.facebook.com/",
+        "https://m.facebook.com/groups/",
+        "https://m.facebook.com/profile.php?id="
+      ],
+      "www_urls": [],
+      "selectors": [
+        "//*[contains(@data-store, \\",
+        "//*[@aria-posinset]",
+        "//article[.//footer]",
+        "//*[@data-module-role=\\",
+        ".txt",
+        "[u]",
+        "[use=\\",
+        "[action^=\\"
+      ],
+      "legacy_markers": [
+        "mbasic",
+        "data-sigil",
+        "data-store"
+      ],
+      "assessment": [
+        "Uses mbasic.facebook.com (2 URLs)",
+        "Uses m.facebook.com / data-sigil (3 URLs)"
+      ]
+    }
+  ],
+  "4. Trang / Page": [
+    {
+      "action": "HDBuffFollowLikePage",
+      "method": "method_95",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://facebook.com/"
+      ],
+      "selectors": [
+        "[{\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDHuyLikePage",
+      "method": "method_65",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/pages/?category=liked&ref=bookmarks&locale=en_US"
+      ],
+      "selectors": [
+        "[aria-label=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDDanhGiaPage",
+      "method": "method_22",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/"
+      ],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDReviewPage",
+      "method": "F31CEBAE",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/"
+      ],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDMoiLikePage",
+      "method": "method_67",
+      "status": "Partially Modernized (method_66)",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [
+        "MoiBanBeLikePageWWW"
+      ],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/send_page_invite/?pageid="
+      ],
+      "www_urls": [
+        "https://facebook.com/"
+      ],
+      "selectors": [
+        "#m_invitee_list",
+        "[type=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": [
+        "Calls Chrome.method_66: MoiBanBeLikePageWWW",
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDBaiVietFanpage",
+      "method": "method_97",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [
+        "LikePageWWW"
+      ],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://facebook.com",
+        "https://www.facebook.com/"
+      ],
+      "selectors": [
+        "[{\\"
+      ],
+      "legacy_markers": [],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02"
+      ]
+    },
+    {
+      "action": "HDTaoPage",
+      "method": "A633080C",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDSharePage",
+      "method": "method_94",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDKichHoatPageVhh",
+      "method": "method_45",
+      "status": "Partially Modernized (method_66)",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [
+        "ActivePageProfile"
+      ],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [],
+      "selectors": [
+        "..."
+      ],
+      "legacy_markers": [],
+      "assessment": [
+        "Calls Chrome.method_66: ActivePageProfile"
+      ]
+    }
+  ],
+  "5. Messenger": [
+    {
+      "action": "HDBuffTinNhanProfile",
+      "method": "method_102",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/messages/t?locale=en_US",
+        "https://www.facebook.com/messages/filtered?locale=en_US",
+        "https://www.facebook.com/messages/t/",
+        "https://www.facebook.com/messages/requests?locale=en_US"
+      ],
+      "selectors": [
+        "[data-release-focus-from=\\",
+        ".html-div:has([role=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDPhanHoiTinNhan",
+      "method": "method_87",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [],
+      "selectors": [
+        "#see_older_threads",
+        "[data-sigil=\\",
+        "[name=\\",
+        "#threadlist_rows a|",
+        "[u]"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (0 URLs)"
+      ]
+    },
+    {
+      "action": "HDXoaTinNhan",
+      "method": "E385342B",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/messages/"
+      ],
+      "www_urls": [],
+      "selectors": [
+        "[data-sigil=\\",
+        "[id*=threadlist_row_other_user_fbid]",
+        "[href*=\\"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    }
+  ],
+  "6. Tường cá nhân / Bài viết": [
+    {
+      "action": "HDDangStatus",
+      "method": "method_91",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/profile.php"
+      ],
+      "www_urls": [],
+      "selectors": [
+        "#timelineBody > div > div > div > div:nth-child(2)",
+        "[full_name]",
+        "#structured_composer_form [role=\\",
+        "#modalDialogView button[type=\\",
+        "[data-sigil=\\",
+        "#photo_input",
+        "#structured_composer_form div[aria-label]",
+        "[name]"
+      ],
+      "legacy_markers": [
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDDangStatusV2",
+      "method": "BF2C451F",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/api/graphql/",
+        "https://www.facebook.com/"
+      ],
+      "selectors": [
+        "//*[@method=\\",
+        "//*[text()=\\",
+        "[aria-label$=\\",
+        "[aria-live=\\",
+        "[aria-label^=\\",
+        "[role=\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    },
+    {
+      "action": "HDBaiVietTrenTuong",
+      "method": "method_92",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook.com/me"
+      ],
+      "mfb_urls": [
+        "https://m.facebook.com/me"
+      ],
+      "www_urls": [
+        "https://www.facebook.com/me"
+      ],
+      "selectors": [],
+      "legacy_markers": [
+        "mbasic"
+      ],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02",
+        "Uses mbasic.facebook.com (1 URLs)",
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDUptopBaiViet",
+      "method": "E41ED239",
+      "status": "Modernized (Hub)",
+      "calls_c1": false,
+      "hubs": [
+        "FacebookActionsHub.Execute"
+      ],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://www.facebook.com/"
+      ],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": [
+        "Delegates to FacebookActionsHub.Execute"
+      ]
+    },
+    {
+      "action": "HDBuffLikeComment",
+      "method": "method_93",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook.com"
+      ],
+      "mfb_urls": [],
+      "www_urls": [],
+      "selectors": [
+        "[role=\\",
+        "...",
+        "[data-sigil=\\",
+        "[aria-hidden=\\",
+        "[u]"
+      ],
+      "legacy_markers": [
+        "mbasic",
+        "data-sigil"
+      ],
+      "assessment": [
+        "Uses mbasic.facebook.com (1 URLs)",
+        "Uses m.facebook.com / data-sigil (0 URLs)"
+      ]
+    },
+    {
+      "action": "HDPhanHoiBinhLuan",
+      "method": "method_66",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [
+        "https://mbasic.facebook.com/"
+      ],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://facebook.com/"
+      ],
+      "selectors": [
+        "#composerInput",
+        "[data-uri*=\\",
+        "[action^=\\",
+        "[data-sigil=\\",
+        "[id^=\\",
+        "[u]"
+      ],
+      "legacy_markers": [
+        "mbasic",
+        "data-sigil",
+        "data-store"
+      ],
+      "assessment": [
+        "Uses mbasic.facebook.com (1 URLs)",
+        "Uses m.facebook.com / data-sigil (0 URLs)"
+      ]
+    },
+    {
+      "action": "HDTuongTacBaiVietTuKhoa",
+      "method": "F7166A93",
+      "status": "Core Feed Engine (C1A9CA02)",
+      "calls_c1": true,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/search/posts?q="
+      ],
+      "www_urls": [
+        "https://www.facebook.com/search/top/?q="
+      ],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": [
+        "Routes through central WWW/m.fb Feed engine C1A9CA02",
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDXoaBaiTuong",
+      "method": "method_69",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/profile.php"
+      ],
+      "www_urls": [],
+      "selectors": [],
+      "legacy_markers": [],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (1 URLs)"
+      ]
+    },
+    {
+      "action": "HDCongKhaiBaiVietGanThe",
+      "method": "DB92349A",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [
+        "https://m.facebook.com/privacy/touch/timeline_and_tagging",
+        "https://m.facebook.com/settings/subscribe/"
+      ],
+      "www_urls": [],
+      "selectors": [
+        "[action*=\\",
+        "[data-store*=\\"
+      ],
+      "legacy_markers": [
+        "data-store"
+      ],
+      "assessment": [
+        "Uses m.facebook.com / data-sigil (2 URLs)"
+      ]
+    },
+    {
+      "action": "HDBuffFollowCaNhan",
+      "method": "method_95",
+      "status": "Legacy Inline",
+      "calls_c1": false,
+      "hubs": [],
+      "m66": [],
+      "mbasic_urls": [],
+      "mfb_urls": [],
+      "www_urls": [
+        "https://facebook.com/"
+      ],
+      "selectors": [
+        "[{\\"
+      ],
+      "legacy_markers": [],
+      "assessment": []
+    }
+  ]
+}
