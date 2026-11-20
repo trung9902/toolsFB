@@ -21,6 +21,11 @@ internal static class Program
 		Application.SetCompatibleTextRenderingDefault(defaultValue: false);
 		try
 		{
+			ModernUITheme.Init();
+		}
+		catch { }
+		try
+		{
 			File.AppendAllText("startup_log.txt", "Calling SetupFolder.CreateBasicFolder...\r\n");
 			SetupFolder.CreateBasicFolder();
 			File.AppendAllText("startup_log.txt", "Calling Application.Run(fIntro)...\r\n");

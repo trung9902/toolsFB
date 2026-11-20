@@ -752,6 +752,19 @@ public partial class fMain : Form
 				null, F5325785, new object[] { true });
 		}
 		catch { }
+		try
+		{
+			ModernUITheme.ApplyTheme(this);
+			if (this.btnInteract != null)
+			{
+				this.btnInteract.BackColor = ModernUITheme.Primary;
+				this.btnInteract.ForeColor = Color.White;
+				this.btnInteract.Font = ModernUITheme.FontBold;
+				this.btnInteract.FlatStyle = FlatStyle.Flat;
+				this.btnInteract.FlatAppearance.BorderSize = 0;
+			}
+		}
+		catch { }
 	}
 
     /// <summary>

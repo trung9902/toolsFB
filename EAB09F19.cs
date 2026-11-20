@@ -76,10 +76,10 @@ public class EAB09F19
 				E632B29E.Rows[int_0].DefaultCellStyle.BackColor = Color.White;
 				break;
 			case 1:
-				E632B29E.Rows[int_0].DefaultCellStyle.BackColor = Color.FromArgb(255, 182, 193);
+				E632B29E.Rows[int_0].DefaultCellStyle.BackColor = Color.FromArgb(254, 242, 242);
 				break;
 			case 2:
-				E632B29E.Rows[int_0].DefaultCellStyle.BackColor = Color.FromArgb(212, 237, 182);
+				E632B29E.Rows[int_0].DefaultCellStyle.BackColor = Color.FromArgb(240, 253, 244);
 				break;
 			}
 			break;
@@ -87,13 +87,13 @@ public class EAB09F19
 			switch (int_1)
 			{
 			case 0:
-				E632B29E.Rows[int_0].DefaultCellStyle.ForeColor = Color.Black;
+				E632B29E.Rows[int_0].DefaultCellStyle.ForeColor = Color.FromArgb(30, 41, 59);
 				break;
 			case 1:
-				E632B29E.Rows[int_0].DefaultCellStyle.ForeColor = Color.Red;
+				E632B29E.Rows[int_0].DefaultCellStyle.ForeColor = Color.FromArgb(220, 38, 38);
 				break;
 			case 2:
-				E632B29E.Rows[int_0].DefaultCellStyle.ForeColor = Color.Green;
+				E632B29E.Rows[int_0].DefaultCellStyle.ForeColor = Color.FromArgb(5, 150, 105);
 				break;
 			}
 			break;
