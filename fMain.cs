@@ -755,14 +755,14 @@ public partial class fMain : Form
 		try
 		{
 			ModernUITheme.ApplyTheme(this);
-			if (this.btnInteract != null)
+			this.Load += (s, e) =>
 			{
-				this.btnInteract.BackColor = ModernUITheme.Primary;
-				this.btnInteract.ForeColor = Color.White;
-				this.btnInteract.Font = ModernUITheme.FontBold;
-				this.btnInteract.FlatStyle = FlatStyle.Flat;
-				this.btnInteract.FlatAppearance.BorderSize = 0;
-			}
+				try
+				{
+					ModernUITheme.ApplyTheme(this);
+				}
+				catch { }
+			};
 		}
 		catch { }
 	}

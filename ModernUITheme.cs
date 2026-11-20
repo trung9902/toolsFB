@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Reflection;
 using System.Windows.Forms;
 using Bunifu.Framework.UI;
@@ -9,12 +10,13 @@ using Bunifu.Framework.UI;
 /// <summary>
 /// Modern Clean Pro Light Theme Engine for LushCare (Windows 11 Fluent / Modern SaaS style).
 /// Delivers an ultra-clean, elegant, eye-friendly white/slate aesthetic across the entire application:
-/// - Crisp Segoe UI typography.
+/// - Razor-sharp typography (Segoe UI with ClearType rendering).
 /// - Polished Color Palette (Slate 50 background, Pure White cards, Royal Blue / Indigo accents).
-/// - Modern pill badges for DataGridView status and account health indicators.
+/// - Modern pill badges for DataGridView status, script tags, and account health indicators.
+/// - Smooth circular clipped avatar rendering.
 /// - Flat, borderless MenuStrip & ContextMenuStrip with smooth hover states.
 /// - Rounded modern buttons with distinct Primary (Blue) and Secondary (Slate) hierarchy.
-/// - Automatic recursive skinning for all forms and popups.
+/// - Automatic recursive skinning for all forms, popups, and the main dashboard.
 /// </summary>
 public static class ModernUITheme
 {
@@ -49,10 +51,10 @@ public static class ModernUITheme
 
     // DataGridView Table Colors
     public static readonly Color TableRowAlt = Color.FromArgb(248, 250, 252);   // #F8FAFC
-    public static readonly Color TableHeaderBg = Color.FromArgb(241, 245, 249); // #F1F5F9
+    public static readonly Color TableHeaderBg = Color.FromArgb(248, 250, 252); // #F8FAFC
     public static readonly Color TableHeaderFg = Color.FromArgb(71, 85, 105);   // #475569
-    public static readonly Color TableSelectionBg = Color.FromArgb(224, 231, 255); // #E0E7FF (Soft Indigo)
-    public static readonly Color TableSelectionFg = Color.FromArgb(30, 41, 59); // #1E293B
+    public static readonly Color TableSelectionBg = Color.FromArgb(238, 242, 255); // #EEF2FF (Soft Indigo)
+    public static readonly Color TableSelectionFg = Color.FromArgb(15, 23, 42); // #0F172A
     public static readonly Color TableGridLine = Color.FromArgb(241, 245, 249);  // #F1F5F9
 
     // Status Pill Badges
@@ -71,6 +73,14 @@ public static class ModernUITheme
     public static readonly Color BadgeInfoBg = Color.FromArgb(224, 231, 255);   // #E0E7FF
     public static readonly Color BadgeInfoFg = Color.FromArgb(55, 48, 163);     // #3730A3
     public static readonly Color BadgeInfoBorder = Color.FromArgb(199, 210, 254); // #C7D2FE
+
+    public static readonly Color BadgeScriptBg = Color.FromArgb(243, 232, 255); // #F3E8FF (Lavender)
+    public static readonly Color BadgeScriptFg = Color.FromArgb(107, 33, 168);  // #6B21A8
+    public static readonly Color BadgeScriptBorder = Color.FromArgb(233, 213, 255); // #E9D5FF
+
+    public static readonly Color BadgeFolderBg = Color.FromArgb(241, 245, 249); // #F1F5F9 (Slate)
+    public static readonly Color BadgeFolderFg = Color.FromArgb(71, 85, 105);   // #475569
+    public static readonly Color BadgeFolderBorder = Color.FromArgb(226, 232, 240); // #E2E8F0
 
     // ==========================================
     // 2. MODERN TYPOGRAPHY (Segoe UI)
@@ -132,9 +142,211 @@ public static class ModernUITheme
                 form.BackColor = BgApp;
             }
 
+            // Dedicated layout polish for fMain dashboard
+            if (form is fMain mainForm)
+            {
+                SkinMainDashboard(mainForm);
+            }
+
             SkinControlsRecursive(form.Controls, form);
         }
         catch { }
+    }
+
+    /// <summary>
+    /// Performs razor-sharp styling on the main dashboard (fMain):
+    /// Title bar, MenuStrip, Action toolbar, Search box, Folder selector, and Account Table.
+    /// </summary>
+    public static void SkinMainDashboard(fMain main)
+    {
+        if (main == null || main.IsDisposed) return;
+
+        try
+        {
+            main.BackColor = BgApp;
+
+            // 1. Root Container Panel
+            if (main.panel1 != null)
+            {
+                main.panel1.BackColor = BgApp;
+                main.panel1.BorderStyle = BorderStyle.None;
+            }
+
+            // 2. Hide legacy bunifu top line
+            if (main.D7A63B91 != null)
+            {
+                main.D7A63B91.Visible = false;
+            }
+
+            // 3. Modern Title Bar (FBA31BBA)
+            if (main.FBA31BBA != null)
+            {
+                main.FBA31BBA.BackColor = BgCard;
+                main.FBA31BBA.Height = 36;
+                main.FBA31BBA.Paint -= TitleBar_Paint;
+                main.FBA31BBA.Paint += TitleBar_Paint;
+
+                if (main.B526D03A != null)
+                {
+                    main.B526D03A.Font = FontHeader;
+                    main.B526D03A.ForeColor = TextTitle;
+                    main.B526D03A.Location = new Point(44, 8);
+                }
+
+                // Window action buttons
+                Button[] winBtns = { main.E836E3B2, main.btnMaximize, main.ADA8C634 };
+                foreach (Button b in winBtns)
+                {
+                    if (b != null)
+                    {
+                        b.FlatStyle = FlatStyle.Flat;
+                        b.FlatAppearance.BorderSize = 0;
+                        b.BackColor = Color.Transparent;
+                        b.Cursor = Cursors.Hand;
+                    }
+                }
+            }
+
+            // 4. Main MenuStrip (D39C9728)
+            if (main.D39C9728 != null)
+            {
+                main.D39C9728.RenderMode = ToolStripRenderMode.ManagerRenderMode;
+                main.D39C9728.BackColor = BgCard;
+                main.D39C9728.Font = FontBody;
+                main.D39C9728.Height = 28;
+                main.D39C9728.Location = new Point(0, 36);
+                main.D39C9728.Padding = new Padding(6, 3, 6, 3);
+            }
+
+            // 5. Action Toolbar - Primary Button (btnInteract)
+            if (main.btnInteract != null)
+            {
+                main.btnInteract.Size = new Size(150, 34);
+                main.btnInteract.Location = new Point(8, 68);
+                main.btnInteract.BackColor = Primary;
+                main.btnInteract.ForeColor = Color.White;
+                main.btnInteract.Font = FontBold;
+                main.btnInteract.FlatStyle = FlatStyle.Flat;
+                main.btnInteract.FlatAppearance.BorderSize = 0;
+                main.btnInteract.Cursor = Cursors.Hand;
+            }
+
+            // 6. Search Container (DC993629)
+            if (main.DC993629 != null)
+            {
+                main.DC993629.BorderStyle = BorderStyle.None;
+                main.DC993629.BackColor = Color.Transparent;
+                main.DC993629.Location = new Point(164, 68);
+                main.DC993629.Height = 34;
+
+                if (main.cbbSearch != null)
+                {
+                    main.cbbSearch.FlatStyle = FlatStyle.Flat;
+                    main.cbbSearch.Font = FontBody;
+                    main.cbbSearch.BackColor = BgCard;
+                }
+                if (main.txbSearch != null)
+                {
+                    main.txbSearch.Font = FontBody;
+                    main.txbSearch.BorderColor = BorderMedium;
+                }
+                if (main.BtnSearch != null)
+                {
+                    main.BtnSearch.FlatStyle = FlatStyle.Flat;
+                    main.BtnSearch.FlatAppearance.BorderSize = 0;
+                    main.BtnSearch.BackColor = BgHover;
+                    main.BtnSearch.Cursor = Cursors.Hand;
+                }
+            }
+
+            // 7. Folder & Action Container (plQuanLyThuMuc)
+            if (main.plQuanLyThuMuc != null)
+            {
+                main.plQuanLyThuMuc.BorderStyle = BorderStyle.None;
+                main.plQuanLyThuMuc.BackColor = Color.Transparent;
+                main.plQuanLyThuMuc.Location = new Point(440, 68);
+                main.plQuanLyThuMuc.Height = 34;
+
+                if (main.label1 != null) { main.label1.Font = FontBold; main.label1.ForeColor = TextMuted; }
+                if (main.label2 != null) { main.label2.Font = FontBold; main.label2.ForeColor = TextMuted; }
+                if (main.D38F4B00 != null) { main.D38F4B00.FlatStyle = FlatStyle.Flat; main.D38F4B00.Font = FontBody; }
+                if (main.FE921A1C != null) { main.FE921A1C.FlatStyle = FlatStyle.Flat; main.FE921A1C.Font = FontBody; }
+
+                // Small utility buttons (+, /, -, ⇄)
+                Button[] utilBtns = { main.AddFileAccount, main.btnEditFile, main.D1117A83, main.btnLoadAcc };
+                foreach (Button ub in utilBtns)
+                {
+                    if (ub != null)
+                    {
+                        ub.FlatStyle = FlatStyle.Flat;
+                        ub.FlatAppearance.BorderColor = BorderSubtle;
+                        ub.FlatAppearance.BorderSize = 1;
+                        ub.BackColor = BgCard;
+                        ub.Cursor = Cursors.Hand;
+                    }
+                }
+
+                // Nhập tài khoản button
+                if (main.CA9D953A != null)
+                {
+                    main.CA9D953A.Height = 32;
+                    main.CA9D953A.FlatStyle = FlatStyle.Flat;
+                    main.CA9D953A.BackColor = PrimaryLight;
+                    main.CA9D953A.ForeColor = Primary;
+                    main.CA9D953A.Font = FontBold;
+                    main.CA9D953A.FlatAppearance.BorderColor = Color.FromArgb(191, 219, 254);
+                    main.CA9D953A.FlatAppearance.BorderSize = 1;
+                    main.CA9D953A.Cursor = Cursors.Hand;
+                }
+            }
+
+            // 8. Close Chromedriver Button (metroButton1)
+            if (main.metroButton1 != null)
+            {
+                main.metroButton1.Text = "✕ Đóng Chrome";
+                main.metroButton1.Size = new Size(130, 34);
+                main.metroButton1.FlatStyle = FlatStyle.Flat;
+                main.metroButton1.BackColor = Color.FromArgb(254, 242, 242);
+                main.metroButton1.ForeColor = Color.FromArgb(220, 38, 38);
+                main.metroButton1.Font = FontBold;
+                main.metroButton1.FlatAppearance.BorderColor = Color.FromArgb(254, 202, 202);
+                main.metroButton1.FlatAppearance.BorderSize = 1;
+                main.metroButton1.Cursor = Cursors.Hand;
+            }
+
+            // 9. Modern DataGridView (F5325785)
+            if (main.F5325785 != null)
+            {
+                main.F5325785.Location = new Point(8, 108);
+                main.F5325785.RowTemplate.Height = 36;
+                foreach (DataGridViewRow r in main.F5325785.Rows)
+                {
+                    r.Height = 36;
+                }
+                SkinDataGridView(main.F5325785);
+            }
+
+            // 10. Status Bar (statusStrip1)
+            if (main.statusStrip1 != null)
+            {
+                main.statusStrip1.Font = FontSmall;
+                main.statusStrip1.BackColor = BgApp;
+                main.statusStrip1.Height = 28;
+                main.statusStrip1.RenderMode = ToolStripRenderMode.ManagerRenderMode;
+            }
+        }
+        catch { }
+    }
+
+    private static void TitleBar_Paint(object sender, PaintEventArgs e)
+    {
+        if (sender is Panel p)
+        {
+            using (Pen borderPen = new Pen(BorderSubtle, 1f))
+            {
+                e.Graphics.DrawLine(borderPen, 0, p.Height - 1, p.Width, p.Height - 1);
+            }
+        }
     }
 
     /// <summary>
@@ -257,7 +469,8 @@ public static class ModernUITheme
     }
 
     /// <summary>
-    /// Transforms DataGridView into a clean, modern SaaS table with pill status badges.
+    /// Transforms DataGridView into a clean, modern SaaS table with pill status badges,
+    /// rounded avatars, and razor-sharp header & row styling.
     /// </summary>
     public static void SkinDataGridView(DataGridView dgv)
     {
@@ -282,9 +495,9 @@ public static class ModernUITheme
             dgv.EnableHeadersVisualStyles = false;
             dgv.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            // Column Headers
+            // Column Headers (Sleek Modern Slate Bar)
             dgv.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
-            dgv.ColumnHeadersHeight = Math.Max(dgv.ColumnHeadersHeight, 34);
+            dgv.ColumnHeadersHeight = Math.Max(dgv.ColumnHeadersHeight, 38);
             dgv.ColumnHeadersDefaultCellStyle.BackColor = TableHeaderBg;
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = TableHeaderFg;
             dgv.ColumnHeadersDefaultCellStyle.Font = FontBold;
@@ -298,7 +511,7 @@ public static class ModernUITheme
             dgv.DefaultCellStyle.SelectionBackColor = TableSelectionBg;
             dgv.DefaultCellStyle.SelectionForeColor = TableSelectionFg;
             dgv.DefaultCellStyle.Font = FontBody;
-            dgv.RowTemplate.Height = Math.Max(dgv.RowTemplate.Height, 28);
+            dgv.RowTemplate.Height = Math.Max(dgv.RowTemplate.Height, 36);
 
             // Alternating Row Style (Soft Slate 50)
             dgv.AlternatingRowsDefaultCellStyle.BackColor = TableRowAlt;
@@ -306,7 +519,7 @@ public static class ModernUITheme
             dgv.AlternatingRowsDefaultCellStyle.SelectionBackColor = TableSelectionBg;
             dgv.AlternatingRowsDefaultCellStyle.SelectionForeColor = TableSelectionFg;
 
-            // Hook CellPainting for Modern Pill Badges
+            // Hook CellPainting for Modern Pill Badges & Circular Avatars
             dgv.CellPainting -= Dgv_CellPainting;
             dgv.CellPainting += Dgv_CellPainting;
         }
@@ -314,103 +527,280 @@ public static class ModernUITheme
     }
 
     /// <summary>
-    /// Custom paints status and health cells as elegant rounded Pill Badges.
+    /// Custom paints headers, status pill badges, circular avatars, and selection accent bar.
     /// </summary>
     private static void Dgv_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
     {
-        if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
-
         try
         {
             DataGridView dgv = sender as DataGridView;
-            if (dgv == null || e.ColumnIndex >= dgv.Columns.Count) return;
+            if (dgv == null) return;
 
-            string colName = dgv.Columns[e.ColumnIndex].Name;
-            bool isStatusCol = colName == "cInfo" || colName == "cStatus" || colName == "cStatus282" || colName == "cFbBlock";
-
-            if (isStatusCol && e.Value != null)
+            // 1. Modern Header Painting
+            if (e.RowIndex == -1 && e.ColumnIndex >= 0)
             {
-                string text = e.Value.ToString().Trim();
-                if (string.IsNullOrEmpty(text)) return;
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
-                // Determine badge palette based on status text
-                Color bg;
-                Color fg;
-                Color border;
-
-                string lower = text.ToLowerInvariant();
-                if (lower == "live" || lower.StartsWith("live"))
+                // Fill header background
+                using (SolidBrush headerBg = new SolidBrush(TableHeaderBg))
                 {
-                    bg = BadgeLiveBg;
-                    fg = BadgeLiveFg;
-                    border = BadgeLiveBorder;
-                }
-                else if (lower.Contains("die") || lower.Contains("văng") || lower.Contains("khóa") || lower.Contains("block") || lower.Contains("tạm dừng"))
-                {
-                    bg = BadgeDieBg;
-                    fg = BadgeDieFg;
-                    border = BadgeDieBorder;
-                }
-                else if (lower.Contains("checkpoint") || lower.Contains("282") || lower.Contains("956") || lower.Contains("xác minh"))
-                {
-                    bg = BadgeWarnBg;
-                    fg = BadgeWarnFg;
-                    border = BadgeWarnBorder;
-                }
-                else if (lower.Contains("đang") || lower.Contains("...") || lower.Contains("tạo") || lower.Contains("chạy") || lower.Contains("running"))
-                {
-                    bg = BadgeInfoBg;
-                    fg = BadgeInfoFg;
-                    border = BadgeInfoBorder;
-                }
-                else
-                {
-                    bg = BgHover;
-                    fg = TextMuted;
-                    border = BorderSubtle;
+                    e.Graphics.FillRectangle(headerBg, e.CellBounds);
                 }
 
-                // Paint standard cell background first
-                e.PaintBackground(e.ClipBounds, (e.State & DataGridViewElementStates.Selected) != 0);
-
-                // Measure badge bounds
-                using (Graphics g = e.Graphics)
+                // Header bottom border line
+                using (Pen bPen = new Pen(BorderSubtle, 1.2f))
                 {
-                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    e.Graphics.DrawLine(bPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
+                }
 
-                    Size textSize = TextRenderer.MeasureText(text, FontBadge);
-                    int padX = 8;
-                    int padY = 3;
-                    int badgeW = textSize.Width + padX * 2;
-                    int badgeH = textSize.Height + padY * 2;
+                // Checkbox in header (cChose)
+                if (dgv.Columns[e.ColumnIndex].Name == "cChose")
+                {
+                    e.Paint(e.CellBounds, DataGridViewPaintParts.ContentForeground);
+                    e.Handled = true;
+                    return;
+                }
 
-                    // Ensure within cell limits
-                    if (badgeW > e.CellBounds.Width - 6) badgeW = e.CellBounds.Width - 6;
-                    if (badgeH > e.CellBounds.Height - 4) badgeH = e.CellBounds.Height - 4;
-
-                    int badgeX = e.CellBounds.X + 4;
-                    int badgeY = e.CellBounds.Y + (e.CellBounds.Height - badgeH) / 2;
-                    Rectangle badgeRect = new Rectangle(badgeX, badgeY, badgeW, badgeH);
-
-                    // Draw rounded pill badge
-                    using (GraphicsPath path = CreateRoundedRectanglePath(badgeRect, 6))
-                    {
-                        using (SolidBrush bBrush = new SolidBrush(bg))
-                        {
-                            g.FillPath(bBrush, path);
-                        }
-                        using (Pen bPen = new Pen(border, 1f))
-                        {
-                            g.DrawPath(bPen, path);
-                        }
-                    }
-
-                    // Draw centered badge text
-                    TextRenderer.DrawText(g, text, FontBadge, badgeRect, fg,
-                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+                // Draw header text
+                string headerText = dgv.Columns[e.ColumnIndex].HeaderText;
+                if (!string.IsNullOrEmpty(headerText))
+                {
+                    Rectangle textRect = new Rectangle(e.CellBounds.X + 8, e.CellBounds.Y, e.CellBounds.Width - 12, e.CellBounds.Height);
+                    TextRenderer.DrawText(e.Graphics, headerText, FontBold, textRect, TableHeaderFg,
+                        TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
                 }
 
                 e.Handled = true;
+                return;
+            }
+
+            if (e.RowIndex < 0 || e.ColumnIndex < 0 || e.ColumnIndex >= dgv.Columns.Count) return;
+
+            string colName = dgv.Columns[e.ColumnIndex].Name;
+            bool isSelected = (e.State & DataGridViewElementStates.Selected) != 0;
+
+            // Determine base row background color
+            Color rowBg = isSelected ? TableSelectionBg : (e.RowIndex % 2 == 0 ? BgCard : TableRowAlt);
+            if (!isSelected && dgv.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.Empty && dgv.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.White)
+            {
+                rowBg = dgv.Rows[e.RowIndex].DefaultCellStyle.BackColor;
+            }
+
+            // 2. Circular Avatar Painting
+            if ((colName == "cAvatar" || colName.ToLowerInvariant().Contains("avatar")) && e.Value is Image avatarImg)
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                // Fill cell background
+                using (SolidBrush bgBrush = new SolidBrush(rowBg))
+                {
+                    e.Graphics.FillRectangle(bgBrush, e.CellBounds);
+                }
+
+                // Draw circular avatar
+                int size = 26;
+                int ax = e.CellBounds.X + (e.CellBounds.Width - size) / 2;
+                int ay = e.CellBounds.Y + (e.CellBounds.Height - size) / 2;
+                Rectangle avatarRect = new Rectangle(ax, ay, size, size);
+
+                using (GraphicsPath path = new GraphicsPath())
+                {
+                    path.AddEllipse(avatarRect);
+                    GraphicsState state = e.Graphics.Save();
+                    e.Graphics.SetClip(path);
+                    e.Graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    e.Graphics.DrawImage(avatarImg, avatarRect);
+                    e.Graphics.Restore(state);
+                }
+
+                // Subtle ring around avatar
+                using (Pen ringPen = new Pen(BorderSubtle, 1f))
+                {
+                    e.Graphics.DrawEllipse(ringPen, avatarRect);
+                }
+
+                // Bottom divider line
+                using (Pen divPen = new Pen(TableGridLine, 1f))
+                {
+                    e.Graphics.DrawLine(divPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
+                }
+
+                e.Handled = true;
+                return;
+            }
+
+            // 3. Status Columns (Pill Badge with Status Dot)
+            bool isStatusCol = colName == "cInfo" || colName == "cStatus" || colName == "cStatus282" || colName == "cFbBlock";
+            if (isStatusCol && e.Value != null)
+            {
+                string text = e.Value.ToString().Trim();
+                if (!string.IsNullOrEmpty(text))
+                {
+                    // Fill cell background
+                    using (SolidBrush bgBrush = new SolidBrush(rowBg))
+                    {
+                        e.Graphics.FillRectangle(bgBrush, e.CellBounds);
+                    }
+
+                    // Badge palette & status dot color
+                    Color bg, fg, border, dotColor;
+                    string lower = text.ToLowerInvariant();
+
+                    if (lower == "live" || lower.StartsWith("live"))
+                    {
+                        bg = BadgeLiveBg; fg = BadgeLiveFg; border = BadgeLiveBorder;
+                        dotColor = Success;
+                    }
+                    else if (lower.Contains("die") || lower.Contains("văng") || lower.Contains("khóa") || lower.Contains("block") || lower.Contains("tạm dừng"))
+                    {
+                        bg = BadgeDieBg; fg = BadgeDieFg; border = BadgeDieBorder;
+                        dotColor = Danger;
+                    }
+                    else if (lower.Contains("checkpoint") || lower.Contains("282") || lower.Contains("956") || lower.Contains("xác minh"))
+                    {
+                        bg = BadgeWarnBg; fg = BadgeWarnFg; border = BadgeWarnBorder;
+                        dotColor = Warning;
+                    }
+                    else if (lower.Contains("đang") || lower.Contains("...") || lower.Contains("tạo") || lower.Contains("chạy") || lower.Contains("running"))
+                    {
+                        bg = BadgeInfoBg; fg = BadgeInfoFg; border = BadgeInfoBorder;
+                        dotColor = Primary;
+                    }
+                    else
+                    {
+                        bg = BadgeFolderBg; fg = BadgeFolderFg; border = BadgeFolderBorder;
+                        dotColor = TextMuted;
+                    }
+
+                    // Render Pill Badge
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+
+                    Size textSize = TextRenderer.MeasureText(text, FontBadge);
+                    int dotSize = 6;
+                    int padLeft = 8 + dotSize + 4;
+                    int padRight = 8;
+                    int badgeW = textSize.Width + padLeft + padRight;
+                    int badgeH = Math.Min(24, e.CellBounds.Height - 6);
+
+                    if (badgeW > e.CellBounds.Width - 8) badgeW = e.CellBounds.Width - 8;
+
+                    int bx = e.CellBounds.X + 4;
+                    int by = e.CellBounds.Y + (e.CellBounds.Height - badgeH) / 2;
+                    Rectangle badgeRect = new Rectangle(bx, by, badgeW, badgeH);
+
+                    // Pill path
+                    using (GraphicsPath path = CreateRoundedRectanglePath(badgeRect, badgeH / 2))
+                    {
+                        using (SolidBrush bBrush = new SolidBrush(bg))
+                        {
+                            e.Graphics.FillPath(bBrush, path);
+                        }
+                        using (Pen bPen = new Pen(border, 1f))
+                        {
+                            e.Graphics.DrawPath(bPen, path);
+                        }
+                    }
+
+                    // Draw status dot
+                    int dotX = bx + 7;
+                    int dotY = by + (badgeH - dotSize) / 2;
+                    using (SolidBrush dotBrush = new SolidBrush(dotColor))
+                    {
+                        e.Graphics.FillEllipse(dotBrush, dotX, dotY, dotSize, dotSize);
+                    }
+
+                    // Draw text
+                    Rectangle badgeTextRect = new Rectangle(bx + padLeft, by, badgeW - padLeft - 4, badgeH);
+                    TextRenderer.DrawText(e.Graphics, text, FontBadge, badgeTextRect, fg,
+                        TextFormatFlags.Left | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+
+                    // Bottom divider line
+                    using (Pen divPen = new Pen(TableGridLine, 1f))
+                    {
+                        e.Graphics.DrawLine(divPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
+                    }
+
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            // 4. Script Column (cKichBan) Tag
+            if (colName == "cKichBan" && e.Value != null)
+            {
+                string text = e.Value.ToString().Trim();
+                if (!string.IsNullOrEmpty(text))
+                {
+                    using (SolidBrush bgBrush = new SolidBrush(rowBg))
+                    {
+                        e.Graphics.FillRectangle(bgBrush, e.CellBounds);
+                    }
+
+                    e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+
+                    Size textSize = TextRenderer.MeasureText(text, FontBadge);
+                    int badgeW = Math.Min(textSize.Width + 14, e.CellBounds.Width - 8);
+                    int badgeH = Math.Min(22, e.CellBounds.Height - 6);
+                    int bx = e.CellBounds.X + 4;
+                    int by = e.CellBounds.Y + (e.CellBounds.Height - badgeH) / 2;
+                    Rectangle badgeRect = new Rectangle(bx, by, badgeW, badgeH);
+
+                    using (GraphicsPath path = CreateRoundedRectanglePath(badgeRect, 6))
+                    {
+                        using (SolidBrush bBrush = new SolidBrush(BadgeScriptBg))
+                        {
+                            e.Graphics.FillPath(bBrush, path);
+                        }
+                        using (Pen bPen = new Pen(BadgeScriptBorder, 1f))
+                        {
+                            e.Graphics.DrawPath(bPen, path);
+                        }
+                    }
+
+                    TextRenderer.DrawText(e.Graphics, text, FontBadge, badgeRect, BadgeScriptFg,
+                        TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.EndEllipsis);
+
+                    using (Pen divPen = new Pen(TableGridLine, 1f))
+                    {
+                        e.Graphics.DrawLine(divPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
+                    }
+
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            // 5. Normal Cell & Selection Accent Bar
+            if (isSelected)
+            {
+                using (SolidBrush bgBrush = new SolidBrush(TableSelectionBg))
+                {
+                    e.Graphics.FillRectangle(bgBrush, e.CellBounds);
+                }
+
+                // Left vertical accent strip on first column
+                if (e.ColumnIndex == 0)
+                {
+                    using (SolidBrush accentBrush = new SolidBrush(Primary))
+                    {
+                        e.Graphics.FillRectangle(accentBrush, e.CellBounds.Left, e.CellBounds.Top, 3, e.CellBounds.Height);
+                    }
+                }
+
+                // Paint cell contents with dark text (never inverted)
+                e.Paint(e.CellBounds, DataGridViewPaintParts.ContentForeground);
+
+                // Bottom divider line
+                using (Pen divPen = new Pen(TableGridLine, 1f))
+                {
+                    e.Graphics.DrawLine(divPen, e.CellBounds.Left, e.CellBounds.Bottom - 1, e.CellBounds.Right, e.CellBounds.Bottom - 1);
+                }
+
+                e.Handled = true;
+                return;
             }
         }
         catch { }
@@ -521,6 +911,7 @@ public static class ModernUITheme
         try
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
             Size textSize = TextRenderer.MeasureText(gb.Text, FontBold);
             Rectangle rect = new Rectangle(0, textSize.Height / 2, gb.Width - 1, gb.Height - textSize.Height / 2 - 1);
@@ -588,6 +979,7 @@ public class ModernLightToolStripRenderer : ToolStripProfessionalRenderer
     {
         e.TextFont = ModernUITheme.FontBody;
         e.TextColor = (e.Item.Selected || e.Item.Pressed) ? ModernUITheme.Primary : ModernUITheme.TextBody;
+        e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
         base.OnRenderItemText(e);
     }
 
