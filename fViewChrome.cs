@@ -98,8 +98,8 @@ public class fViewChrome : Form
 	/// </summary>
 	private void SetupCleanLightAndZoomToolbar()
 	{
-		// 1. Nền màu trắng tinh tế (Clean Slate 50)
-		Color bgLight = Color.FromArgb(248, 250, 252);
+		// 1. Nền màu trắng tinh khiết
+		Color bgLight = Color.White;
 		BackColor = bgLight;
 		panelListDevice.BackColor = bgLight;
 
@@ -230,8 +230,8 @@ public class fViewChrome : Form
 		pnlZoomBar.Controls.Add(flowRight);
 		Controls.Add(pnlZoomBar);
 
-		// Đảm bảo panelListDevice nằm dưới toolbar
-		panelListDevice.BringToFront();
+		// Đảm bảo thanh công cụ luôn nằm trên cùng
+		pnlZoomBar.BringToFront();
 	}
 
 	private Button CreateToolbarButton(string text, int width, Color bg, Color fg)
@@ -521,7 +521,7 @@ public class fViewChrome : Form
 		panelListDevice = new System.Windows.Forms.FlowLayoutPanel();
 		SuspendLayout();
 		panelListDevice.AutoScroll = true;
-		panelListDevice.BackColor = System.Drawing.Color.FromArgb(248, 250, 252);
+		panelListDevice.BackColor = System.Drawing.Color.White;
 		panelListDevice.Dock = System.Windows.Forms.DockStyle.Fill;
 		panelListDevice.Location = new System.Drawing.Point(0, 44);
 		panelListDevice.Name = "panelListDevice";
