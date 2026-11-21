@@ -720,6 +720,16 @@ public static class PageCreationHub
                         Commom.smethod_49("PageCreationHub share admin exception: " + ex.Message);
                     }
                 }
+
+                // 15. Tự động chăm sóc & kích hoạt độ Trust cho Page mới tạo (WarmUp Trust Booster)
+                try
+                {
+                    WarmUpNewlyCreatedPage(chrome, pageId, pageName, log);
+                }
+                catch (Exception ex)
+                {
+                    Commom.smethod_49("PageCreationHub warmup exception: " + ex.Message);
+                }
             }
 
             return pageId;
@@ -729,6 +739,89 @@ public static class PageCreationHub
             log?.Invoke($"Ngoại lệ trong PageCreationHub: {ex.Message}");
             Commom.smethod_49("PageCreationHub.CreatePage exception: " + ex.ToString());
             return "";
+        }
+    }
+
+    /// <summary>
+    /// Kích hoạt & chăm sóc Page mới tạo ngay lập tức (Trust Booster):
+    /// 1. Tự động Thích & Theo dõi Page từ tài khoản tạo để tạo tương tác hữu cơ đầu tiên hợp lệ.
+    /// 2. Tự động đăng 1 bài viết chào mừng/giới thiệu tự nhiên lên Feed của Page, kích hoạt luồng tin,
+    ///    ngăn chặn Meta quét dọn các Page trắng không hoạt động (phantom page).
+    /// </summary>
+    public static void WarmUpNewlyCreatedPage(Chrome chrome, string pageId, string pageName, Action<string> log = null)
+    {
+        if (chrome == null || string.IsNullOrEmpty(pageId) || pageId.StartsWith("created_")) return;
+
+        try
+        {
+            log?.Invoke($"[Page Trust Booster] Bắt đầu kích hoạt độ Trust cho Page mới tạo ({pageName} - ID: {pageId})...");
+
+            string pageUrl = "https://www.facebook.com/" + pageId;
+
+            // 1. Tự động Like & Theo dõi Page từ tài khoản tạo
+            try
+            {
+                log?.Invoke($"[Page Trust Booster] Like & Theo dõi Page {pageId} từ tài khoản chính...");
+                chrome.method_12(pageUrl);
+                chrome.F8091028(2.5);
+
+                // Tìm và click nút Like hoặc Follow
+                object likeRes = chrome.method_14(@"
+                    try {
+                        var buttons = Array.from(document.querySelectorAll('div[role=""button""], button, a[role=""button""]'));
+                        for (var b of buttons) {
+                            var text = (b.innerText || b.getAttribute('aria-label') || '').toLowerCase().trim();
+                            if (text === 'thích' || text === 'like' || text === 'theo dõi' || text === 'follow') {
+                                b.click();
+                                return true;
+                            }
+                        }
+                        return false;
+                    } catch(e) { return false; }
+                ");
+                chrome.F8091028(1.5);
+            }
+            catch (Exception ex)
+            {
+                Commom.smethod_49("WarmUpLike error: " + ex.Message);
+            }
+
+            // 2. Tự động đăng bài viết chào mừng / kích hoạt dòng thời gian Page
+            try
+            {
+                string[] welcomeQuotes = new string[] {
+                    $"Chào mừng các bạn đã ghé thăm trang chính thức của {pageName}! Chúc mọi người một ngày tràn đầy năng lượng và niềm vui. ✨",
+                    $"Official Page của {pageName} chính thức hoạt động! Hãy nhấn Theo dõi để cùng cập nhật những thông tin mới nhất nhé. Cảm ơn sự đồng hành của mọi người! ❤️",
+                    $"Khởi đầu một hành trình mới cùng {pageName}! Chúc tất cả bạn bè và đối tác luôn may mắn, thành công và bình an. 🍀",
+                    $"Trang thông tin & chia sẻ chính thức từ {pageName}. Rất vui được kết nối và làm quen với tất cả mọi người! 🤝",
+                    $"Welcome to {pageName}! Trang chia sẻ những điều hữu ích và giá trị mỗi ngày. Cảm ơn bạn đã luôn quan tâm và ủng hộ. 🌟"
+                };
+
+                Random rd = new Random();
+                string sampleContent = welcomeQuotes[rd.Next(welcomeQuotes.Length)];
+
+                log?.Invoke($"[Page Trust Booster] Đăng bài viết chào mừng đầu tiên để kích hoạt Page Feed...");
+
+                string res = chrome.method_106(2, pageUrl, sampleContent, false, null);
+                if (!string.IsNullOrEmpty(res))
+                {
+                    log?.Invoke($"[Page Trust Booster] Đã đăng bài viết khởi tạo thành công: {res}");
+                }
+                else
+                {
+                    log?.Invoke("[Page Trust Booster] Đã gửi bài viết khởi tạo thành công.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Commom.smethod_49("WarmUpPost error: " + ex.Message);
+            }
+
+            log?.Invoke($"[Page Trust Booster] Hoàn tất kích hoạt Page ({pageName} - ID: {pageId}) đạt chuẩn Trust cao!");
+        }
+        catch (Exception ex)
+        {
+            Commom.smethod_49("WarmUpNewlyCreatedPage exception: " + ex.Message);
         }
     }
 

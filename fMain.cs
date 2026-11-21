@@ -745,6 +745,7 @@ public partial class fMain : Form
         SetupQuickSelectorFeatures();
         SetupProcessGovernorFeatures();
         ApplyCompactContextMenuStyle();
+        SetupLiveSearchFeatures();
 		try
 		{
 			typeof(DataGridView).InvokeMember("DoubleBuffered",
@@ -851,6 +852,7 @@ public partial class fMain : Form
 	{
 		Dictionary<string, string> dataSource = new Dictionary<string, string>
 		{
+			{ "all", Language.GetValue("Tất cả") },
 			{ "cUid", "UID" },
 			{
 				"cPassword",
