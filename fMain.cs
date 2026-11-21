@@ -19948,15 +19948,17 @@ public partial class fMain : Form
 				if (string_1 == "start")
 				{
 					plQuanLyThuMuc.Enabled = false;
-					btnInteract.Image = bitmap_1;
-					btnInteract.Text = Language.GetValue("Dừng Tương Tác");
+					btnInteract.Image = null;
+					btnInteract.Text = "⏹  " + Language.GetValue("Dừng Tương Tác");
+					btnInteract.BackColor = ModernUITheme.Danger;
 					EAB09F19.smethod_0(F5325785, bool_0: false);
 				}
 				else if (string_1 == "stop")
 				{
-					btnInteract.Text = Language.GetValue("Chạy Tương Tác");
+					btnInteract.Text = "▶  " + Language.GetValue("Chạy Tương Tác");
 					plQuanLyThuMuc.Enabled = true;
-					btnInteract.Image = bitmap_0;
+					btnInteract.Image = null;
+					btnInteract.BackColor = ModernUITheme.Primary;
 					btnInteract.Enabled = true;
 					EAB09F19.smethod_0(F5325785, bool_0: true);
 				}

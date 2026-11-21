@@ -219,15 +219,21 @@ public static class ModernUITheme
             }
 
             // 5. Action Toolbar - Primary Button (btnInteract)
+            int tbY = 68;
+            int tbH = 32;
+
             if (main.btnInteract != null)
             {
-                main.btnInteract.Size = new Size(150, 34);
-                main.btnInteract.Location = new Point(8, 68);
+                main.btnInteract.Size = new Size(142, tbH);
+                main.btnInteract.Location = new Point(8, tbY);
                 main.btnInteract.BackColor = Primary;
                 main.btnInteract.ForeColor = Color.White;
-                main.btnInteract.Font = FontBold;
+                main.btnInteract.Font = new Font("Segoe UI", 9.25f, FontStyle.Bold);
                 main.btnInteract.FlatStyle = FlatStyle.Flat;
                 main.btnInteract.FlatAppearance.BorderSize = 0;
+                main.btnInteract.Image = null;
+                main.btnInteract.Text = "▶  Chạy Tương Tác";
+                main.btnInteract.TextAlign = ContentAlignment.MiddleCenter;
                 main.btnInteract.Cursor = Cursors.Hand;
             }
 
@@ -236,25 +242,38 @@ public static class ModernUITheme
             {
                 main.DC993629.BorderStyle = BorderStyle.None;
                 main.DC993629.BackColor = Color.Transparent;
-                main.DC993629.Location = new Point(164, 68);
-                main.DC993629.Height = 34;
+                main.DC993629.Location = new Point(158, tbY);
+                main.DC993629.Size = new Size(265, tbH);
 
                 if (main.cbbSearch != null)
                 {
+                    main.cbbSearch.Location = new Point(0, 2);
+                    main.cbbSearch.Size = new Size(82, tbH);
                     main.cbbSearch.FlatStyle = FlatStyle.Flat;
-                    main.cbbSearch.Font = FontBody;
-                    main.cbbSearch.BackColor = BgCard;
+                    main.cbbSearch.Font = new Font("Segoe UI", 9f);
+                    main.cbbSearch.BackColor = Color.FromArgb(248, 250, 252);
+                    main.cbbSearch.ForeColor = TextBody;
                 }
                 if (main.txbSearch != null)
                 {
-                    main.txbSearch.Font = FontBody;
+                    main.txbSearch.Location = new Point(86, 2);
+                    main.txbSearch.Size = new Size(146, tbH);
+                    main.txbSearch.Font = new Font("Segoe UI", 9.25f);
                     main.txbSearch.BorderColor = BorderMedium;
+                    main.txbSearch.ForeColor = TextBody;
                 }
                 if (main.BtnSearch != null)
                 {
+                    main.BtnSearch.Location = new Point(234, 1);
+                    main.BtnSearch.Size = new Size(30, 30);
                     main.BtnSearch.FlatStyle = FlatStyle.Flat;
                     main.BtnSearch.FlatAppearance.BorderSize = 0;
-                    main.BtnSearch.BackColor = BgHover;
+                    main.BtnSearch.BackgroundImage = null;
+                    main.BtnSearch.Image = null;
+                    main.BtnSearch.Text = "🔍";
+                    main.BtnSearch.Font = new Font("Segoe UI", 9.5f);
+                    main.BtnSearch.BackColor = Color.FromArgb(241, 245, 249);
+                    main.BtnSearch.ForeColor = Primary;
                     main.BtnSearch.Cursor = Cursors.Hand;
                 }
             }
@@ -264,36 +283,68 @@ public static class ModernUITheme
             {
                 main.plQuanLyThuMuc.BorderStyle = BorderStyle.None;
                 main.plQuanLyThuMuc.BackColor = Color.Transparent;
-                main.plQuanLyThuMuc.Location = new Point(440, 68);
-                main.plQuanLyThuMuc.Height = 34;
+                main.plQuanLyThuMuc.Location = new Point(432, tbY);
+                main.plQuanLyThuMuc.Size = new Size(640, tbH);
 
-                if (main.label1 != null) { main.label1.Font = FontBold; main.label1.ForeColor = TextMuted; }
-                if (main.label2 != null) { main.label2.Font = FontBold; main.label2.ForeColor = TextMuted; }
-                if (main.D38F4B00 != null) { main.D38F4B00.FlatStyle = FlatStyle.Flat; main.D38F4B00.Font = FontBody; }
-                if (main.FE921A1C != null) { main.FE921A1C.FlatStyle = FlatStyle.Flat; main.FE921A1C.Font = FontBody; }
+                if (main.label1 != null)
+                {
+                    main.label1.Location = new Point(0, 7);
+                    main.label1.Font = new Font("Segoe UI", 8.75f, FontStyle.Bold);
+                    main.label1.ForeColor = TextMuted;
+                }
+                if (main.D38F4B00 != null)
+                {
+                    main.D38F4B00.Location = new Point(60, 2);
+                    main.D38F4B00.Size = new Size(115, tbH);
+                    main.D38F4B00.FlatStyle = FlatStyle.Flat;
+                    main.D38F4B00.Font = new Font("Segoe UI", 9f);
+                    main.D38F4B00.BackColor = Color.White;
+                }
+                if (main.label2 != null)
+                {
+                    main.label2.Location = new Point(182, 7);
+                    main.label2.Font = new Font("Segoe UI", 8.75f, FontStyle.Bold);
+                    main.label2.ForeColor = TextMuted;
+                }
+                if (main.FE921A1C != null)
+                {
+                    main.FE921A1C.Location = new Point(214, 2);
+                    main.FE921A1C.Size = new Size(125, tbH);
+                    main.FE921A1C.FlatStyle = FlatStyle.Flat;
+                    main.FE921A1C.Font = new Font("Segoe UI", 9f);
+                    main.FE921A1C.BackColor = Color.White;
+                }
 
                 // Small utility buttons (+, /, -, ⇄)
                 Button[] utilBtns = { main.AddFileAccount, main.btnEditFile, main.D1117A83, main.btnLoadAcc };
-                foreach (Button ub in utilBtns)
+                int btnStartX = 346;
+                for (int i = 0; i < utilBtns.Length; i++)
                 {
+                    Button ub = utilBtns[i];
                     if (ub != null)
                     {
+                        ub.Location = new Point(btnStartX + (i * 30), 2);
+                        ub.Size = new Size(28, 28);
                         ub.FlatStyle = FlatStyle.Flat;
                         ub.FlatAppearance.BorderColor = BorderSubtle;
                         ub.FlatAppearance.BorderSize = 1;
-                        ub.BackColor = BgCard;
+                        ub.BackColor = Color.White;
                         ub.Cursor = Cursors.Hand;
                     }
                 }
 
-                // Nhập tài khoản button
+                // Nhập tài khoản button (Clean Modern Secondary Pill)
                 if (main.CA9D953A != null)
                 {
-                    main.CA9D953A.Height = 32;
+                    main.CA9D953A.Location = new Point(474, 1);
+                    main.CA9D953A.Size = new Size(140, 30);
+                    main.CA9D953A.Image = null; // Xóa vĩnh viễn icon thư mục vàng kiểu cũ
+                    main.CA9D953A.Text = "📥  Nhập tài khoản";
+                    main.CA9D953A.TextAlign = ContentAlignment.MiddleCenter;
                     main.CA9D953A.FlatStyle = FlatStyle.Flat;
                     main.CA9D953A.BackColor = PrimaryLight;
                     main.CA9D953A.ForeColor = Primary;
-                    main.CA9D953A.Font = FontBold;
+                    main.CA9D953A.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
                     main.CA9D953A.FlatAppearance.BorderColor = Color.FromArgb(191, 219, 254);
                     main.CA9D953A.FlatAppearance.BorderSize = 1;
                     main.CA9D953A.Cursor = Cursors.Hand;
@@ -303,12 +354,15 @@ public static class ModernUITheme
             // 8. Close Chromedriver Button (metroButton1)
             if (main.metroButton1 != null)
             {
-                main.metroButton1.Text = "✕ Đóng Chrome";
-                main.metroButton1.Size = new Size(130, 34);
+                main.metroButton1.Size = new Size(130, tbH);
+                main.metroButton1.Location = new Point(main.panel1.Width - 140, tbY);
+                main.metroButton1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                main.metroButton1.Text = "✕  Đóng Chrome";
+                main.metroButton1.TextAlign = ContentAlignment.MiddleCenter;
                 main.metroButton1.FlatStyle = FlatStyle.Flat;
                 main.metroButton1.BackColor = Color.FromArgb(254, 242, 242);
                 main.metroButton1.ForeColor = Color.FromArgb(220, 38, 38);
-                main.metroButton1.Font = FontBold;
+                main.metroButton1.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
                 main.metroButton1.FlatAppearance.BorderColor = Color.FromArgb(254, 202, 202);
                 main.metroButton1.FlatAppearance.BorderSize = 1;
                 main.metroButton1.Cursor = Cursors.Hand;
