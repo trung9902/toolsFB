@@ -2988,26 +2988,32 @@ public class Chrome
 		}
 		try
 		{
-			if (Process_1 != null && !Process_1.HasExited)
+			// Diet sach toan bo cay tien trinh Chrome va ChromeDriver bang taskkill /T /F chong orphan
+			if (Process_1 != null)
 			{
-				List<int> childPids = Commom.GetChildProcessIds(Process_1.Id);
-				foreach (int pid in childPids)
+				try
 				{
-					try
+					int p1Id = Process_1.Id;
+					if (!Process_1.HasExited)
 					{
-						Process child = Process.GetProcessById(pid);
-						if (!child.HasExited) child.Kill();
+						var psi = new ProcessStartInfo("taskkill", $"/pid {p1Id} /T /F") { CreateNoWindow = true, UseShellExecute = false };
+						Process.Start(psi)?.WaitForExit(1500);
 					}
-					catch {}
 				}
+				catch {}
 			}
-			if (Process_0 != null && !Process_0.HasExited)
+			if (Process_0 != null)
 			{
-				Process_0.Kill();
-			}
-			if (Process_1 != null && !Process_1.HasExited)
-			{
-				Process_1.Kill();
+				try
+				{
+					int p0Id = Process_0.Id;
+					if (!Process_0.HasExited)
+					{
+						var psi = new ProcessStartInfo("taskkill", $"/pid {p0Id} /T /F") { CreateNoWindow = true, UseShellExecute = false };
+						Process.Start(psi)?.WaitForExit(1500);
+					}
+				}
+				catch {}
 			}
 		}
 		catch

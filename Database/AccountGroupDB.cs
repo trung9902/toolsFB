@@ -606,7 +606,8 @@ public static class AccountGroupDB
         return 0;
     }
 
-    public static bool IsGroupPendingApproval(string groupId)
+    // Bổ sung: kiểm tra nhóm có chờ duyệt không với cơ chế TTL (mặc định 72h để giải phóng nhóm tránh cạn kiệt)
+    public static bool IsGroupPendingApproval(string groupId, int ttlHours = 72)
     {
         if (string.IsNullOrWhiteSpace(groupId)) return false;
         EnsureDatabase();
@@ -627,10 +628,12 @@ public static class AccountGroupDB
                 using (var conn = new SQLiteConnection(GetDbConnectionString(dbPath)))
                 {
                     conn.Open();
-                    string sql = "SELECT post_approval FROM account_groups WHERE group_id=@gid ORDER BY id DESC LIMIT 1";
+                    string thresholdTime = DateTime.Now.AddHours(-ttlHours).ToString("yyyy-MM-dd HH:mm:ss");
+                    string sql = "SELECT post_approval FROM account_groups WHERE group_id=@gid AND updated_at IS NOT NULL AND updated_at >= @threshold ORDER BY id DESC LIMIT 1";
                     using (var cmd = new SQLiteCommand(sql, conn))
                     {
                         cmd.Parameters.AddWithValue("@gid", cleanGid);
+                        cmd.Parameters.AddWithValue("@threshold", thresholdTime);
                         object val = cmd.ExecuteScalar();
                         if (val != null && val != DBNull.Value)
                         {

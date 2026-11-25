@@ -970,6 +970,21 @@ public static class AccountsCenterHub
         }
 
         HandleReauth(chrome, pass);
+
+        // Kiem tra canh bao loi tu choi tu Meta (gioi han 60 ngay, ten vi pham, v.v.) tranh False-Success
+        try
+        {
+            var alerts = driver.FindElements(By.CssSelector("div[role='alert'], [aria-live='assertive'], div[class*='error']"));
+            foreach (var a in alerts)
+            {
+                if (a.Displayed && !string.IsNullOrWhiteSpace(a.Text))
+                {
+                    return ErrorJson("meta_rejected: " + a.Text.Trim());
+                }
+            }
+        }
+        catch { }
+
         return SuccessJson();
     }
     #endregion
@@ -1079,6 +1094,21 @@ public static class AccountsCenterHub
         }
 
         HandleReauth(chrome, pass);
+
+        // Kiem tra canh bao loi tu choi tu Meta (gioi han 60 ngay, ten vi pham, v.v.) tranh False-Success
+        try
+        {
+            var alerts = driver.FindElements(By.CssSelector("div[role='alert'], [aria-live='assertive'], div[class*='error']"));
+            foreach (var a in alerts)
+            {
+                if (a.Displayed && !string.IsNullOrWhiteSpace(a.Text))
+                {
+                    return ErrorJson("meta_rejected: " + a.Text.Trim());
+                }
+            }
+        }
+        catch { }
+
         return SuccessJson();
     }
     #endregion

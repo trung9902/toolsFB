@@ -394,3 +394,19 @@ internal class SetupFolder
 		}
 	}
 }
+
+/// <summary>
+/// Bao ve du lieu nhay cam bang Windows DPAPI
+/// </summary>
+public static class SecureDataProtection
+{
+    public static string ProtectSecret(string plain)
+    {
+        return AiSecretStore.Protect(plain);
+    }
+
+    public static string UnprotectSecret(string cipher)
+    {
+        return AiSecretStore.Unprotect(cipher);
+    }
+}

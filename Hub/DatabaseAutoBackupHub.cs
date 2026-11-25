@@ -112,11 +112,31 @@ public static class DatabaseAutoBackupHub
                     destFilePath = Path.Combine(backupDir, $"{dbNameWithoutExt}_backup_{timeStamp}_{Guid.NewGuid().ToString().Substring(0, 4)}.sqlite");
                 }
 
-                // 1. Checkpoint WAL thụ động để flush các log đang ghi dở
-                CheckpointWalPassive(dbPath);
-
-                // 2. Sao chép file an toàn có retry
-                SafeCopyFile(dbPath, destFilePath);
+                // 1. Sao lưu chuẩn ACID thông qua SQLite Online Backup API
+                // Thêm Pooling=False và dọn dẹp pool để tránh khóa file backup khi Prune / Restore
+                bool backupSuccess = false;
+                try
+                {
+                    string srcConnStr = $"Data Source={dbPath};Version=3;Read Only=True;Pooling=False;BusyTimeout=15000;";
+                    string dstConnStr = $"Data Source={destFilePath};Version=3;Pooling=False;";
+                    using (var srcConn = new SQLiteConnection(srcConnStr))
+                    using (var dstConn = new SQLiteConnection(dstConnStr))
+                    {
+                        srcConn.Open();
+                        dstConn.Open();
+                        srcConn.BackupDatabase(dstConn, "main", "main", -1, null, 0);
+                        backupSuccess = true;
+                    }
+                }
+                catch
+                {
+                    // Fallback sang checkpoint + SafeCopyFile nếu BackupDatabase gặp sự cố
+                    CheckpointWalPassive(dbPath);
+                    SafeCopyFile(dbPath, destFilePath);
+                    string srcWal = dbPath + "-wal";
+                    string dstWal = destFilePath + "-wal";
+                    if (File.Exists(srcWal)) { try { SafeCopyFile(srcWal, dstWal); } catch { } }
+                }
 
                 // 3. Tự động dọn dẹp các bản backup cũ quá 7 bản
                 PruneOldBackups(keepCount: 7);
@@ -249,7 +269,6 @@ public static class DatabaseAutoBackupHub
                 // 3. Giải phóng hoàn toàn Connection Pool của SQLite
                 try
                 {
-                    SQLiteConnection.ClearAllPools();
                 }
                 catch { }
 
@@ -360,7 +379,7 @@ public static class DatabaseAutoBackupHub
     }
 
     /// <summary>
-    /// Gửi lệnh PRAGMA wal_checkpoint(PASSIVE) nhẹ nhàng flush các trang WAL mà không khóa các luồng đọc/ghi khác.
+    /// Gửi lệnh PRAGMA wal_checkpoint(TRUNCATE) để flush toàn bộ các trang WAL về file chính và thu gọn WAL file.
     /// </summary>
     private static void CheckpointWalPassive(string dbPath)
     {
@@ -370,15 +389,15 @@ public static class DatabaseAutoBackupHub
                 ConnectorAccounts.connectorAccounts_0.sqliteConnection_0 != null &&
                 ConnectorAccounts.connectorAccounts_0.sqliteConnection_0.State == ConnectionState.Open)
             {
-                ConnectorAccounts.ConnectorAccounts_0.method_2("PRAGMA wal_checkpoint(PASSIVE);");
+                ConnectorAccounts.ConnectorAccounts_0.method_2("PRAGMA wal_checkpoint(TRUNCATE);");
                 return;
             }
 
-            string connStr = $"Data Source={dbPath};Version=3;Journal Mode=WAL;BusyTimeout=5000;";
+            string connStr = $"Data Source={dbPath};Version=3;Journal Mode=WAL;BusyTimeout=15000;";
             using (var conn = new SQLiteConnection(connStr))
             {
                 conn.Open();
-                using (var cmd = new SQLiteCommand("PRAGMA wal_checkpoint(PASSIVE);", conn))
+                using (var cmd = new SQLiteCommand("PRAGMA wal_checkpoint(TRUNCATE);", conn))
                 {
                     cmd.ExecuteNonQuery();
                 }

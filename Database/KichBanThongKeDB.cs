@@ -747,14 +747,17 @@ public static class KichBanThongKeDB
                         using (var conn = new SQLiteConnection(GetConnectionString(dbPath)))
                         {
                             conn.Open();
-                            // Tránh trùng lặp khi cả Chrome và fMain cùng ghi nhận 1 bài viết trong thời gian ngắn
-                            using (var checkCmd = new SQLiteCommand("SELECT COUNT(1) FROM lich_su_dang_bai WHERE uid = @uid AND link_bai_viet = @link AND thoi_gian >= @recent;", conn))
+                            // Tránh trùng lặp khi cả Chrome và fMain cùng ghi nhận 1 bài viết trong thời gian ngắn (chỉ dedup với URL thực tế)
+                            if (!string.IsNullOrEmpty(linkBaiViet) && (linkBaiViet.StartsWith("http://") || linkBaiViet.StartsWith("https://") || linkBaiViet.Contains("facebook.com") || linkBaiViet.Contains("fb.com")))
                             {
-                                checkCmd.Parameters.AddWithValue("@uid", uid ?? "");
-                                checkCmd.Parameters.AddWithValue("@link", linkBaiViet ?? "");
-                                checkCmd.Parameters.AddWithValue("@recent", DateTime.Now.AddMinutes(-3).ToString("yyyy-MM-dd HH:mm:ss"));
-                                long exists = (long)(checkCmd.ExecuteScalar() ?? 0L);
-                                if (exists > 0) continue;
+                                using (var checkCmd = new SQLiteCommand("SELECT COUNT(1) FROM lich_su_dang_bai WHERE uid = @uid AND link_bai_viet = @link AND thoi_gian >= @recent;", conn))
+                                {
+                                    checkCmd.Parameters.AddWithValue("@uid", uid ?? "");
+                                    checkCmd.Parameters.AddWithValue("@link", linkBaiViet ?? "");
+                                    checkCmd.Parameters.AddWithValue("@recent", DateTime.Now.AddMinutes(-3).ToString("yyyy-MM-dd HH:mm:ss"));
+                                    long exists = (long)(checkCmd.ExecuteScalar() ?? 0L);
+                                    if (exists > 0) continue;
+                                }
                             }
 
                             using (var cmd = new SQLiteCommand(@"

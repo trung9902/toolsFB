@@ -469,8 +469,16 @@ public static class CheckpointClassifier
             {
                 using (var client = new ImapClient())
                 {
-                    // Cho phép bỏ qua chứng chỉ SSL nếu chạy qua mạng có proxy / firewall
-                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
+                    // Cấu hình TLS IMAP bảo vệ chống tấn công MITM:
+                    // Chỉ chấp nhận chứng chỉ hợp lệ từ Trusted CA, hoặc kết nối tới localhost / proxy nội bộ
+                    client.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) =>
+                    {
+                        if (sslPolicyErrors == System.Net.Security.SslPolicyErrors.None) return true;
+                        // Chấp nhận nếu là kết nối qua localhost / IP nội bộ / mail bridge
+                        if (resolvedHost == "127.0.0.1" || resolvedHost == "::1" || resolvedHost.Equals("localhost", StringComparison.OrdinalIgnoreCase)) return true;
+                        // Từ chối tất cả các chứng chỉ giả mạo / không xác thực
+                        return false;
+                    };
                     client.Timeout = 8000; // 8s timeout cho mỗi thao tác socket tránh treo
 
                     SecureSocketOptions socketOptions = (resolvedPort == 993)

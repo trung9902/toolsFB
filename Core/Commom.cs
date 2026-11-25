@@ -142,19 +142,7 @@ public class Commom
             string appDataLic = Path.Combine(appData, "license.lic");
             string localLic = Path.Combine(smethod_95(), "settings", "license.lic");
 
-            // Check if user submitted admin/VIP credentials
-            string user = (string_1 ?? "").Trim().ToLower();
-            string pass = (string_2 ?? "").Trim().ToLower();
-            if (user == "admin" || pass == "admin" || pass == "lushcare2026" || pass == "lushcarevip" || user.Contains("lushcare"))
-            {
-                string permPayload = "PERM|Admin VIP|" + hwid + "|2035-12-31";
-                string permEnc = Convert.ToBase64String(Encoding.UTF8.GetBytes(permPayload));
-                try { File.WriteAllText(appDataLic, permEnc); } catch { }
-                try { File.WriteAllText(localLic, permEnc); } catch { }
-                return "1|Admin (VIP)||2035/12/31 23:59:59|LUSH-VIP-" + hwid;
-            }
-
-            // Check existing license file in AppData or Local
+            // Check existing license file in AppData or Local (loại bỏ backdoor tài khoản cứng)
             string licFile = File.Exists(appDataLic) ? appDataLic : (File.Exists(localLic) ? localLic : null);
             if (licFile != null)
             {
@@ -931,7 +919,7 @@ public class Commom
 
     public static string smethod_49(string A4BE9F37)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(A4BE9F37);
+        byte[] bytes = Encoding.UTF8.GetBytes(A4BE9F37 ?? "");
         return Convert.ToBase64String(bytes);
     }
 

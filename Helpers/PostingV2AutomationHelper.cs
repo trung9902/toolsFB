@@ -473,7 +473,7 @@ public static class PostingV2AutomationHelper
                         // Đồng bộ vào DB lịch sử đăng bài
                         try
                         {
-                            KichBanThongKeDB.LogPost(uid, null, postResult, content, "Bài viết tường", "Thành công");
+                            KichBanThongKeDB.LogPost(uid, postResult, content, "Bài viết tường", "Thành công");
                         }
                         catch { }
 
@@ -663,7 +663,7 @@ public static class PostingV2AutomationHelper
                                 }
                                 try
                                 {
-                                    KichBanThongKeDB.LogPost(uid, null, resGrp, contentGrp, "Bài viết nhóm", "Chờ duyệt");
+                                    KichBanThongKeDB.LogPost(uid, resGrp, contentGrp, "Bài viết nhóm", "Chờ duyệt", tenTaiKhoan: cleanGid);
                                 }
                                 catch { }
 
@@ -684,7 +684,7 @@ public static class PostingV2AutomationHelper
                                 }
                                 try
                                 {
-                                    KichBanThongKeDB.LogPost(uid, null, resGrp, contentGrp, "Bài viết nhóm", "Thành công");
+                                    KichBanThongKeDB.LogPost(uid, resGrp, contentGrp, "Bài viết nhóm", "Thành công", tenTaiKhoan: cleanGid);
                                 }
                                 catch { }
 
@@ -775,7 +775,7 @@ public static class PostingV2AutomationHelper
                             // Đồng bộ vào DB lịch sử đăng bài
                             try
                             {
-                                KichBanThongKeDB.LogPost(uid, null, resPage, contentPage, "Bài viết Fanpage", "Thành công");
+                                KichBanThongKeDB.LogPost(uid, resPage, contentPage, "Bài viết Fanpage", "Thành công", tenTaiKhoan: pageTarget);
                             }
                             catch { }
 
