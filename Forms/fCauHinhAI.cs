@@ -62,6 +62,15 @@ public class fCauHinhAI : Form
 	public fCauHinhAI(string B39252A0 = "")
 	{
 		InitializeComponent();
+		Button btnJev = new Button
+		{
+			Text = "Cấu hình Jev",
+			Location = new Point(459, 529),
+			Size = new Size(108, 35),
+			Cursor = Cursors.Hand
+		};
+		btnJev.Click += (sender, args) => Commom.smethod_35(new fCauHinhJev());
+		panel2.Controls.Add(btnJev);
 		Language.CD21F0A9(this);
 		if (Base.smethod_2() == "VN")
 		{

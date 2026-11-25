@@ -50,6 +50,13 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Giữ nguyên tên manifest resource gốc (Filename.resources) dù .resx được di chuyển vào thư mục con,
+         tránh vỡ ComponentResourceManager của WinForms khi load icon/ảnh/text thiết kế sẵn lúc runtime. -->
+    <EmbeddedResource Update="**\*.resx">
+      <LogicalName>%(Filename).resources</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="WindowsBase" />

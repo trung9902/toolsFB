@@ -1,0 +1,304 @@
+{
+  "findings": {
+    "AUTH01": {
+      "evidence_sufficiency": 0.94,
+      "route": "prioritized",
+      "category": "security",
+      "category_probability": 0.99,
+      "category_confidence": 0.99,
+      "impact_score": 2.29,
+      "impact_confidence": 0.63,
+      "impact_probabilities": {
+        "0": 0.0,
+        "1": 0.04,
+        "2": 0.63,
+        "3": 0.33
+      },
+      "priority": "P1",
+      "priority_score": 2.49,
+      "priority_confidence": 0.49,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.01,
+        "2": 0.49,
+        "3": 0.5
+      }
+    },
+    "AUTH02": {
+      "evidence_sufficiency": 0.94,
+      "route": "prioritized",
+      "category": "security",
+      "category_probability": 0.99,
+      "category_confidence": 0.99,
+      "impact_score": 2.53,
+      "impact_confidence": 0.53,
+      "impact_probabilities": {
+        "0": 0.0,
+        "1": 0.07,
+        "2": 0.33,
+        "3": 0.6
+      },
+      "priority": "P0",
+      "priority_score": 2.75,
+      "priority_confidence": 0.74,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.01,
+        "2": 0.24,
+        "3": 0.75
+      }
+    },
+    "AUTH03": {
+      "evidence_sufficiency": 0.93,
+      "route": "prioritized",
+      "category": "reliability",
+      "category_probability": 0.82,
+      "category_confidence": 0.77,
+      "impact_score": 1.49,
+      "impact_confidence": 0.5,
+      "impact_probabilities": {
+        "0": 0.01,
+        "1": 0.54,
+        "2": 0.41,
+        "3": 0.04
+      },
+      "priority": "P1",
+      "priority_score": 1.58,
+      "priority_confidence": 0.54,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.44,
+        "2": 0.54,
+        "3": 0.02
+      }
+    },
+    "ISO01": {
+      "evidence_sufficiency": 0.93,
+      "route": "prioritized",
+      "category": "security",
+      "category_probability": 0.9,
+      "category_confidence": 0.87,
+      "impact_score": 2.46,
+      "impact_confidence": 0.53,
+      "impact_probabilities": {
+        "0": 0.0,
+        "1": 0.01,
+        "2": 0.53,
+        "3": 0.46
+      },
+      "priority": "P0",
+      "priority_score": 2.85,
+      "priority_confidence": 0.85,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.15,
+        "3": 0.85
+      }
+    },
+    "ISO02": {
+      "evidence_sufficiency": 0.93,
+      "route": "prioritized",
+      "category": "data_integrity",
+      "category_probability": 0.53,
+      "category_confidence": 0.41,
+      "impact_score": 2.37,
+      "impact_confidence": 0.63,
+      "impact_probabilities": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.63,
+        "3": 0.37
+      },
+      "priority": "P1",
+      "priority_score": 2.47,
+      "priority_confidence": 0.53,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.0,
+        "2": 0.53,
+        "3": 0.47
+      }
+    },
+    "STATE01": {
+      "evidence_sufficiency": 0.92,
+      "route": "prioritized",
+      "category": "reliability",
+      "category_probability": 0.83,
+      "category_confidence": 0.79,
+      "impact_score": 1.85,
+      "impact_confidence": 0.72,
+      "impact_probabilities": {
+        "0": 0.01,
+        "1": 0.19,
+        "2": 0.73,
+        "3": 0.07
+      },
+      "priority": "P1",
+      "priority_score": 1.86,
+      "priority_confidence": 0.76,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.19,
+        "2": 0.76,
+        "3": 0.05
+      }
+    },
+    "STATE02": {
+      "evidence_sufficiency": 0.92,
+      "route": "prioritized",
+      "category": "reliability",
+      "category_probability": 0.92,
+      "category_confidence": 0.9,
+      "impact_score": 2.13,
+      "impact_confidence": 0.79,
+      "impact_probabilities": {
+        "0": 0.0,
+        "1": 0.04,
+        "2": 0.79,
+        "3": 0.17
+      },
+      "priority": "P1",
+      "priority_score": 2.12,
+      "priority_confidence": 0.8,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.04,
+        "2": 0.8,
+        "3": 0.16
+      }
+    },
+    "WF01": {
+      "evidence_sufficiency": 0.94,
+      "route": "prioritized",
+      "category": "security",
+      "category_probability": 0.6,
+      "category_confidence": 0.5,
+      "impact_score": 2.08,
+      "impact_confidence": 0.79,
+      "impact_probabilities": {
+        "0": 0.0,
+        "1": 0.06,
+        "2": 0.79,
+        "3": 0.15
+      },
+      "priority": "P1",
+      "priority_score": 2.18,
+      "priority_confidence": 0.8,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.01,
+        "2": 0.8,
+        "3": 0.19
+      }
+    },
+    "WF02": {
+      "evidence_sufficiency": 0.94,
+      "route": "prioritized",
+      "category": "reliability",
+      "category_probability": 0.97,
+      "category_confidence": 0.96,
+      "impact_score": 1.36,
+      "impact_confidence": 0.61,
+      "impact_probabilities": {
+        "0": 0.02,
+        "1": 0.61,
+        "2": 0.37,
+        "3": 0.0
+      },
+      "priority": "P2",
+      "priority_score": 1.27,
+      "priority_confidence": 0.72,
+      "priority_probabilities": {
+        "0": 0.01,
+        "1": 0.72,
+        "2": 0.27,
+        "3": 0.0
+      }
+    },
+    "WF03": {
+      "evidence_sufficiency": 0.94,
+      "route": "prioritized",
+      "category": "reliability",
+      "category_probability": 0.91,
+      "category_confidence": 0.89,
+      "impact_score": 1.23,
+      "impact_confidence": 0.71,
+      "impact_probabilities": {
+        "0": 0.03,
+        "1": 0.72,
+        "2": 0.24,
+        "3": 0.01
+      },
+      "priority": "P2",
+      "priority_score": 1.49,
+      "priority_confidence": 0.48,
+      "priority_probabilities": {
+        "0": 0.01,
+        "1": 0.5,
+        "2": 0.47,
+        "3": 0.02
+      }
+    },
+    "RECOV01": {
+      "evidence_sufficiency": 0.94,
+      "route": "prioritized",
+      "category": "security",
+      "category_probability": 0.45,
+      "category_confidence": 0.31,
+      "impact_score": 2.2,
+      "impact_confidence": 0.4,
+      "impact_probabilities": {
+        "0": 0.0,
+        "1": 0.2,
+        "2": 0.4,
+        "3": 0.4
+      },
+      "priority": "P1",
+      "priority_score": 2.37,
+      "priority_confidence": 0.52,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.05,
+        "2": 0.52,
+        "3": 0.43
+      }
+    },
+    "PASS01": {
+      "evidence_sufficiency": 0.91,
+      "route": "prioritized",
+      "category": "reliability",
+      "category_probability": 0.87,
+      "category_confidence": 0.84,
+      "impact_score": 2.38,
+      "impact_confidence": 0.39,
+      "impact_probabilities": {
+        "0": 0.0,
+        "1": 0.09,
+        "2": 0.43,
+        "3": 0.48
+      },
+      "priority": "P1",
+      "priority_score": 2.19,
+      "priority_confidence": 0.71,
+      "priority_probabilities": {
+        "0": 0.0,
+        "1": 0.05,
+        "2": 0.71,
+        "3": 0.24
+      }
+    }
+  },
+  "usage": {
+    "input_tokens": 8963,
+    "output_tokens": 1429
+  },
+  "models": [
+    "jev-1.14.0"
+  ],
+  "cached": false,
+  "policy": {
+    "evidence_threshold": 0.7,
+    "note": "Jev prioritizes bounded findings; source evidence and regression tests remain authoritative."
+  }
+}

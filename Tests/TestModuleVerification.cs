@@ -43,6 +43,13 @@ namespace LushCareTests
             Console.WriteLine($"Thời gian bắt đầu: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
             Console.WriteLine();
 
+            if (args != null && args.Any(arg => string.Equals(arg, "--jev-only", StringComparison.OrdinalIgnoreCase)))
+            {
+                TestJevSecureConfigurationSuite();
+                Console.WriteLine($"TỔNG KẾT JEV: {passedCount} PASSED, {failedCount} FAILED");
+                Environment.Exit(failedCount == 0 ? 0 : 1);
+            }
+
             Test2FABase32Offline();
             TestCheckpointClassifier();
             TestProxyHelperParse();
@@ -50,6 +57,7 @@ namespace LushCareTests
             TestCookieVaultSuite();
             TestDatabaseAutoBackupHubSuite();
             TestQuickSelectorSuite();
+            TestJevSecureConfigurationSuite();
 
             Console.WriteLine();
             Console.WriteLine("================================================================================");
@@ -466,6 +474,46 @@ namespace LushCareTests
                     "CreateCheckpointIcon tạo icon 16x16 hợp lệ", "");
             }
 
+            Console.WriteLine();
+        }
+
+        static void TestJevSecureConfigurationSuite()
+        {
+            Console.WriteLine("--- 8. KIỂM THỬ JEV SECURE CONFIGURATION & TYPED DECISIONS ---");
+
+            string key = "test_jev_key_never_send_to_network";
+            string protectedValue = AiSecretStore.Protect(key);
+            Assert(!string.IsNullOrEmpty(protectedValue) && protectedValue != key && !protectedValue.Contains(key),
+                "DPAPI không lưu API key dạng plaintext", "");
+            Assert(AiSecretStore.Unprotect(protectedValue) == key,
+                "DPAPI giải mã API key đúng Windows user", "");
+            Assert(AiSecretStore.Unprotect("not-valid-base64") == "",
+                "DPAPI từ chối ciphertext không hợp lệ an toàn", "");
+
+            JevChoiceResult choice = JevResponseParser.ParseChoice(
+                "{\"model\":\"jev-test\",\"answers\":{\"checkpoint\":{\"type\":\"choice\",\"choice\":\"EmailOTP\",\"confidence\":0.92,\"probabilities\":{\"EmailOTP\":0.95,\"SmsOTP\":0.05}}},\"usage\":{\"input_tokens\":123,\"output_tokens\":9}}",
+                "checkpoint");
+            Assert(choice != null && choice.Choice == "EmailOTP" && choice.SelectedProbability >= 0.94,
+                "Parse Jev Choice giữ typed choice và xác suất", "");
+            Assert(choice != null && choice.InputTokens == 123,
+                "Parse Jev usage.input_tokens để theo dõi chi phí", "");
+
+            JevNoulResult noul = JevResponseParser.ParseNoul(
+                "{\"answers\":{\"safe\":{\"type\":\"noul\",\"noul\":0.81}},\"usage\":{\"input_tokens\":50}}",
+                "safe");
+            Assert(noul != null && noul.Probability > 0.8 && noul.IsYes(0.7) && !noul.IsNo(0.3),
+                "Parse Jev Noul áp dụng ngưỡng yes/no", "");
+
+            bool rejected = false;
+            try
+            {
+                JevResponseParser.ParseChoice("{\"answers\":{\"x\":{\"type\":\"choice\",\"choice\":\"A\"}}}", "x");
+            }
+            catch
+            {
+                rejected = true;
+            }
+            Assert(rejected, "Từ chối Choice thiếu probabilities thay vì đoán", "");
             Console.WriteLine();
         }
 

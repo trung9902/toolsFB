@@ -14,8 +14,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="LushCare">
-      <HintPath>..\bin\Debug\net48\LushCare.exe</HintPath>
+      <HintPath Condition="'$(LushCareAssemblyPath)' == ''">..\bin\Debug\net48\LushCare.exe</HintPath>
+      <HintPath Condition="'$(LushCareAssemblyPath)' != ''">$(LushCareAssemblyPath)</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
