@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace LushCareTests
 {
-    class Program
+    public partial class Program
     {
         static int passedCount = 0;
         static int failedCount = 0;
@@ -43,6 +43,7 @@ namespace LushCareTests
             Console.WriteLine($"Thời gian bắt đầu: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
             Console.WriteLine();
 
+#if !PROXY_TEST_ONLY
             if (args != null && args.Any(arg => string.Equals(arg, "--jev-only", StringComparison.OrdinalIgnoreCase)))
             {
                 TestJevSecureConfigurationSuite();
@@ -50,14 +51,20 @@ namespace LushCareTests
                 Environment.Exit(failedCount == 0 ? 0 : 1);
             }
 
-            Test2FABase32Offline();
-            TestCheckpointClassifier();
-            TestProxyHelperParse();
-            TestPrepareAntiDetectionSelfie();
-            TestCookieVaultSuite();
-            TestDatabaseAutoBackupHubSuite();
-            TestQuickSelectorSuite();
-            TestJevSecureConfigurationSuite();
+            if (args != null && args.Any(arg => string.Equals(arg, "--all", StringComparison.OrdinalIgnoreCase)))
+            {
+                Test2FABase32Offline();
+                TestCheckpointClassifier();
+                TestProxyHelperParse();
+                TestPrepareAntiDetectionSelfie();
+                TestCookieVaultSuite();
+                TestDatabaseAutoBackupHubSuite();
+                TestQuickSelectorSuite();
+                TestJevSecureConfigurationSuite();
+            }
+#endif
+
+            TestProxyAuthSecuritySuite();
 
             Console.WriteLine();
             Console.WriteLine("================================================================================");
@@ -67,6 +74,7 @@ namespace LushCareTests
             Environment.Exit(failedCount == 0 ? 0 : 1);
         }
 
+#if !PROXY_TEST_ONLY
         static void Test2FABase32Offline()
         {
             Console.WriteLine("--- 1. KIỂM THỬ GIẢI MÃ 2FA BASE32 OFFLINE TỐC ĐỘ CAO ---");
@@ -525,5 +533,6 @@ namespace LushCareTests
                 return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
             }
         }
+#endif
     }
 }

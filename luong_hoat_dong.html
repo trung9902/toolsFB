@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Sơ Đồ Luồng Hoạt Động - Hệ Thống LushCare (toolsFB)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1800px;
+      height: 1100px;
+      background: #090d16;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #f1f5f9;
+      padding: 32px 40px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .header-left h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-left p {
+      font-size: 14px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .badges {
+      display: flex;
+      gap: 10px;
+    }
+    .badge {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .badge-blue { background: rgba(14, 165, 233, 0.15); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3); }
+    .badge-purple { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .badge-green { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+    /* Main Flow Grid */
+    .flow-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      margin: 24px 0 16px 0;
+      position: relative;
+    }
+
+    .stage-card {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .stage-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .stage-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .stage-title {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .color-1 .stage-num { background: #0284c7; color: #fff; }
+    .color-1 { border-top: 3px solid #38bdf8; }
+
+    .color-2 .stage-num { background: #6366f1; color: #fff; }
+    .color-2 { border-top: 3px solid #818cf8; }
+
+    .color-3 .stage-num { background: #d97706; color: #fff; }
+    .color-3 { border-top: 3px solid #fbbf24; }
+
+    .color-4 .stage-num { background: #059669; color: #fff; }
+    .color-4 { border-top: 3px solid #34d399; }
+
+    .color-5 .stage-num { background: #e11d48; color: #fff; }
+    .color-5 { border-top: 3px solid #fb7185; }
+
+    /* Step items inside cards */
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+    }
+    .step-item {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .step-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .step-desc {
+      font-size: 11.5px;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+    .step-tag {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-weight: 600;
+    }
+    .tag-blue { background: rgba(56, 189, 248, 0.15); color: #38bdf8; }
+    .tag-purple { background: rgba(192, 132, 252, 0.15); color: #c084fc; }
+    .tag-amber { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+    .tag-green { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+    .tag-rose { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
+
+    /* Flow Connectors */
+    .arrow-indicator {
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      color: #38bdf8;
+      font-weight: bold;
+      font-size: 12px;
+    }
+
+    /* Bottom Info Sections */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 6px;
+    }
+    .info-box {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .info-box-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-box-desc {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+    .text-sky { color: #38bdf8; }
+    .text-amber { color: #fbbf24; }
+    .text-emerald { color: #34d399; }
+    .text-rose { color: #fb7185; }
+
+    /* Footer */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid #1e293b;
+      font-size: 11.5px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-left">
+      <h1>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+          <polyline points="2 17 12 22 22 17"></polyline>
+          <polyline points="2 12 12 17 22 12"></polyline>
+        </svg>
+        LUSHCARE GLOBAL (toolsFB) · SƠ ĐỒ LUỒNG HOẠT ĐỘNG TOÀN HỆ THỐNG
+      </h1>
+      <p>Kiến trúc vận hành tự động hóa đa luồng: Quản trị tài nguyên, điều phối trình duyệt độc lập, tích hợp AI & cập nhật kết quả</p>
+    </div>
+    <div class="badges">
+      <span class="badge badge-blue">⚡ .NET 4.8 & C# x64</span>
+      <span class="badge badge-purple">🛡️ DOM-First & Anti-Checkpoint</span>
+      <span class="badge badge-green">🤖 Multi-Engine AI Gateway</span>
+    </div>
+  </header>
+
+  <!-- Flow Grid: 5 Main Stages -->
+  <div class="flow-container">
+
+    <!-- STAGE 1 -->
+    <div class="stage-card color-1">
+      <div class="arrow-indicator">➔</div>
+      <div class="stage-header">
+        <div class="stage-num">01</div>
+        <div class="stage-title">KHỞI ĐỘNG &amp;<br>CHUẨN BỊ MÔI TRƯỜNG</div>
+      </div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-name">🚀 Entry Point &amp; Theme</div>
+          <div class="step-desc">Khởi tạo tiến trình WinForms, kích hoạt ModernUITheme (Bunifu WinForms) và bắt lỗi toàn cục Exception Handler.</div>
+          <span class="step-tag tag-blue">Program.cs</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">📁 SetupFolder &amp; SQLite</div>
+          <div class="step-desc">Tự động tạo các thư mục cấu trúc và khởi tạo/migrate CSDL SQLite sạch sẽ (db_lushcare.sqlite, interact.sqlite).</div>
+          <span class="step-tag tag-blue">SetupFolder.cs</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">🌐 ChromeDriver Updater</div>
+          <div class="step-desc">Tự phát hiện phiên bản Google Chrome máy tính và tự động tải/cập nhật chromedriver.exe tương thích 100%.</div>
+          <span class="step-tag tag-blue">ChromeDriverUpdater.cs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 2 -->
+    <div class="stage-card color-2">
+      <div class="arrow-indicator">➔</div>
+      <div class="stage-header">
+        <div class="stage-num">02</div>
+        <div class="stage-title">NẠP DỮ LIỆU &amp;<br>CẤU HÌNH KỊCH BẢN</div>
+      </div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-name">📥 Import Thông Minh</div>
+          <div class="step-desc">AccountFormatDetector tự nhận diện chuỗi UID|Pass|2FA|Cookie|Proxy... Phân nhóm theo thư mục danh mục.</div>
+          <span class="step-tag tag-purple">AccountFormatDetector.cs</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">📜 Lập Kịch Bản Tương Tác</div>
+          <div class="step-desc">Người dùng chọn chuỗi hành động từ 72+ module (fHD*): Lướt Newsfeed, Reels, Story, Kết bạn, Đăng bài V2...</div>
+          <span class="step-tag tag-purple">ConnectorKichBan.cs</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">⚙️ Cài Đặt Tham Số Vận Hành</div>
+          <div class="step-desc">Thiết lập số luồng đồng thời (Threads), khoảng trễ ngẫu nhiên (AdaptiveDelayEngine) và phương thức chạy.</div>
+          <span class="step-tag tag-purple">fCauHinhChung.cs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 3 -->
+    <div class="stage-card color-3">
+      <div class="arrow-indicator">➔</div>
+      <div class="stage-header">
+        <div class="stage-num">03</div>
+        <div class="stage-title">ĐIỀU PHỐI ĐA LUỒNG &amp;<br>CÁCH LY PHIÊN CHẠY</div>
+      </div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-name">🔀 Worker Thread Pool</div>
+          <div class="step-desc">fMain khởi tạo và phân bổ danh sách tài khoản theo từng Worker Thread độc lập để chạy song song.</div>
+          <span class="step-tag tag-amber">fMain.cs (Multi-thread)</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">🛡️ Proxy Circuit Breaker</div>
+          <div class="step-desc">Kiểm tra kết nối và độ trễ IP (MinProxy, ShopLike, OBC, XProxy, Dcom), tự động xoay IP mới cho từng luồng.</div>
+          <span class="step-tag tag-amber">ProxyCircuitBreaker.cs</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">📂 Profile Isolation</div>
+          <div class="step-desc">Khởi tạo thư mục profiles/{uid} độc lập cho từng nick, bảo toàn Cookie/Session và tránh lây checkpoint.</div>
+          <span class="step-tag tag-amber">ProfileSession.cs</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 4 -->
+    <div class="stage-card color-4">
+      <div class="arrow-indicator">➔</div>
+      <div class="stage-header">
+        <div class="stage-num">04</div>
+        <div class="stage-title">TRÌNH DUYỆT &amp;<br>TỰ ĐỘNG HÓA TƯƠNG TÁC</div>
+      </div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-name">🔐 Đăng Nhập &amp; Giải 2FA</div>
+          <div class="step-desc">Tự động kiểm tra Cookie. Nếu hết hạn, tự điền Pass và sinh mã 2FA cục bộ tức thời bằng LocalTotpEngine.</div>
+          <span class="step-tag tag-green">LocalTotpEngine.cs</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">🎭 Hành Vi Người Thật (DOM)</div>
+          <div class="step-desc">Mô phỏng cuộn mượt Bezier (HumanScroll), gõ phím hoặc paste văn bản siêu tốc &lt;0.5s bằng HumanTyping.</div>
+          <span class="step-tag tag-green">HumanScroll.cs / Typing</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">🤖 Tương Tác &amp; AI Prompt</div>
+          <div class="step-desc">Đăng bài V2 (ưu tiên nhóm không duyệt), Switch Page Pro5. AI Gateway tự tạo caption/comment tránh trùng lặp.</div>
+          <span class="step-tag tag-green">DangBaiV2 / fCauHinhAI</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 5 -->
+    <div class="stage-card color-5">
+      <div class="stage-header">
+        <div class="stage-num">05</div>
+        <div class="stage-title">TRẢ KẾT QUẢ &amp;<br>DỌN DẸP TÀI NGUYÊN</div>
+      </div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-name">📊 Cập Nhật UI Real-Time</div>
+          <div class="step-desc">Cột Trạng Thái đếm ngược delay, Cột Tình Trạng cập nhật Live (xanh), Checkpoint 956/282 (vàng), Die (đỏ).</div>
+          <span class="step-tag tag-rose">DataGridView (dtgvAcc)</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">📝 Xuất Log Theo UID</div>
+          <div class="step-desc">Ghi link bài đăng thành công vào output/posts/{uid}.txt phục vụ đối soát, thống kê và gửi báo cáo khách hàng.</div>
+          <span class="step-tag tag-rose">output/posts/{uid}.txt</span>
+        </div>
+        <div class="step-item">
+          <div class="step-name">🧹 Dọn Dẹp Tiến Trình &amp; RAM</div>
+          <div class="step-desc">Lưu Cookie mới vào SQLite. SmartProcessGovernor diệt Chrome zombie; ProfileCachePruner dọn sạch cache phình to.</div>
+          <span class="step-tag tag-rose">SmartProcessGovernor.cs</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Details / Highlights -->
+  <div class="bottom-grid">
+    <div class="info-box">
+      <div class="info-box-title text-sky">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        Bảo Vệ Tài Khoản Cao Cấp
+      </div>
+      <div class="info-box-desc">
+        Hệ thống cô lập Profile riêng biệt, kết hợp Local TOTP 32 ký tự nội bộ không lộ lọt ra web ngoài, cùng cơ chế tự động đọc OTP Hotmail qua IMAP giải checkpoint 956.
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title text-amber">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Cân Bằng Tải &amp; Quản Trị Proxy
+      </div>
+      <div class="info-box-desc">
+        Bộ ngắt mạch Proxy Circuit Breaker đo độ trễ mạng trước khi mở Chrome; phân luồng linh hoạt giữa Proxy dân cư xoay, Proxy tĩnh IPv4/IPv6 và trạm 4G Hilink.
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title text-emerald">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+        AI Multi-Gateway Thông Minh
+      </div>
+      <div class="info-box-desc">
+        Tự động luân chuyển (Smart Fallback) giữa Gemini 3.5/3.8, ChatGPT gpt-4o-mini và DeepSeek; tự làm sạch định dạng Markdown code fences để bài đăng xuất hiện tự nhiên.
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title text-rose">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+        Tối Ưu Phần Cứng &amp; Ổ Cứng
+      </div>
+      <div class="info-box-desc">
+        Công cụ giải phóng dung lượng định kỳ quét sạch GPUCache, Code Cache mà không làm mất phiên đăng nhập; tiêu chuẩn 450MB RAM/luồng giúp chạy mượt dàn lớn.
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div>Sơ đồ quy chuẩn kiến trúc kỹ thuật · Dự án LushCare Global (toolsFB)</div>
+    <div>Cập nhật: Tháng 11/2026 · Định dạng trực quan độ phân giải cao (1800 x 1100 px)</div>
+  </footer>
+
+</body>
+</html>

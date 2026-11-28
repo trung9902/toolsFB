@@ -1050,46 +1050,84 @@ public partial class fMain : Form
 
 	private void method_4(string string_1)
 	{
-		switch (string_1)
+		try
 		{
-		case "ToggleCheck":
-		{
-			for (int k = 0; k < F5325785.SelectedRows.Count; k++)
+			this.F5325785.SuspendLayout();
+			int colChose = F5325785.Columns.Contains("cChose") ? F5325785.Columns["cChose"].Index : -1;
+			switch (string_1)
 			{
-				int index = F5325785.SelectedRows[k].Index;
-				B183E907(index, "cChose", !Convert.ToBoolean(F6061E95(index, "cChose")));
-			}
-			EA1B25A9();
-			break;
-		}
-		case "SelectHighline":
-		{
-			DataGridViewSelectedRowCollection selectedRows = F5325785.SelectedRows;
-			for (int j = 0; j < selectedRows.Count; j++)
+			case "ToggleCheck":
 			{
-				B183E907(selectedRows[j].Index, "cChose", true);
+				for (int k = 0; k < F5325785.SelectedRows.Count; k++)
+				{
+					int index = F5325785.SelectedRows[k].Index;
+					if (colChose >= 0)
+					{
+						bool cur = Convert.ToBoolean(F5325785.Rows[index].Cells[colChose].Value);
+						F5325785.Rows[index].Cells[colChose].Value = !cur;
+					}
+					else
+					{
+						B183E907(index, "cChose", !Convert.ToBoolean(F6061E95(index, "cChose")));
+					}
+				}
+				EA1B25A9();
+				break;
 			}
-			EA1B25A9();
-			break;
-		}
-		case "UnAll":
-		{
-			for (int l = 0; l < F5325785.RowCount; l++)
+			case "SelectHighline":
 			{
-				B183E907(l, "cChose", false);
+				DataGridViewSelectedRowCollection selectedRows = F5325785.SelectedRows;
+				for (int j = 0; j < selectedRows.Count; j++)
+				{
+					if (colChose >= 0)
+					{
+						selectedRows[j].Cells[colChose].Value = true;
+					}
+					else
+					{
+						B183E907(selectedRows[j].Index, "cChose", true);
+					}
+				}
+				EA1B25A9();
+				break;
 			}
-			EA1B25A9(0);
-			break;
-		}
-		case "All":
-		{
-			for (int i = 0; i < F5325785.RowCount; i++)
+			case "UnAll":
 			{
-				B183E907(i, "cChose", true);
+				for (int l = 0; l < F5325785.RowCount; l++)
+				{
+					if (colChose >= 0)
+					{
+						F5325785.Rows[l].Cells[colChose].Value = false;
+					}
+					else
+					{
+						B183E907(l, "cChose", false);
+					}
+				}
+				EA1B25A9(0);
+				break;
 			}
-			EA1B25A9(F5325785.RowCount);
-			break;
+			case "All":
+			{
+				for (int i = 0; i < F5325785.RowCount; i++)
+				{
+					if (colChose >= 0)
+					{
+						F5325785.Rows[i].Cells[colChose].Value = true;
+					}
+					else
+					{
+						B183E907(i, "cChose", true);
+					}
+				}
+				EA1B25A9(F5325785.RowCount);
+				break;
+			}
+			}
 		}
+		finally
+		{
+			this.F5325785.ResumeLayout(true);
 		}
 	}
 

@@ -1,0 +1,3 @@
+/target:library
+/out:Browser\ProxyAuthTunnel.dll
+Browser\ProxyAuthTunnel.cs
