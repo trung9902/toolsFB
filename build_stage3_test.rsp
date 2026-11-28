@@ -1,0 +1,8 @@
+/target:exe
+/out:Tests\TestStage3Lifecycle.exe
+/r:System.dll
+/r:System.Core.dll
+Tests\TestStage3Lifecycle.cs
+Browser\JobObject.cs
+Browser\IsolatedDriverManager.cs
+Support\CommomStub.cs

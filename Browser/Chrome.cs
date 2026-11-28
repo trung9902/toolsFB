@@ -16,9 +16,13 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using LushCare.Browser;
 
-public class Chrome
+public class Chrome : IDisposable
 {
+    internal JobObject _jobObject;
+    public JobObject JobObject => _jobObject;
+
     public bool PreserveSession { get; set; }
     public bool ManualSessionLogin { get; set; }
 	[StructLayout(LayoutKind.Auto)]
@@ -647,6 +651,9 @@ public class Chrome
 		}
 	}
 
+	private LushCare.Browser.ProxyAuthTunnel _proxyAuthTunnel;
+	private string _sessionProxyAuthDir;
+
 	public int Int32_1
 	{
 		[CompilerGenerated]
@@ -947,6 +954,17 @@ public class Chrome
 					{
 						try
 						{
+							if (BenchmarkClearCacheOnStart && Directory.Exists(String_1))
+							{
+								try
+								{
+									string c1 = Path.Combine(String_1, "Default", "Cache");
+									if (Directory.Exists(c1)) Directory.Delete(c1, true);
+									string c2 = Path.Combine(String_1, "Default", "Code Cache");
+									if (Directory.Exists(c2)) Directory.Delete(c2, true);
+								}
+								catch { }
+							}
 							Directory.CreateDirectory(String_1);
                             chromeOptions.AddArgument("--user-data-dir=" + Path.GetFullPath(String_1));
 						}
@@ -1032,7 +1050,31 @@ public class Chrome
 					if (A3A32284.Split(':').Length == 4)
 					{
 						string[] arrayProxy = A3A32284.Split(':');
-						proxyAuthExtensionDir = CreateProxyAuthExtension(arrayProxy[0], Convert.ToInt32(arrayProxy[1]), arrayProxy[2], arrayProxy[3], Int32_1);
+						string upstreamHost = arrayProxy[0];
+						int upstreamPort = Convert.ToInt32(arrayProxy[1]);
+						string proxyUser = arrayProxy[2];
+						string proxyPass = arrayProxy[3];
+						bool isSocks5 = (Int32_1 == 1);
+
+						try
+						{
+							if (_proxyAuthTunnel != null)
+							{
+								_proxyAuthTunnel.Dispose();
+							}
+							_proxyAuthTunnel = new LushCare.Browser.ProxyAuthTunnel(upstreamHost, upstreamPort, proxyUser, proxyPass, isSocks5);
+							_proxyAuthTunnel.Start();
+							chromeOptions.AddArgument("--proxy-server=127.0.0.1:" + _proxyAuthTunnel.LocalPort);
+						}
+						catch (Exception ex)
+						{
+							string safeMsg = (ex != null) ? ex.ToString() : "";
+							if (!string.IsNullOrEmpty(proxyPass))
+							{
+								safeMsg = safeMsg.Replace(proxyPass, "[REDACTED]");
+							}
+							method_46(new Exception(safeMsg), "chrome.ProxyAuthTunnel");
+						}
 					}
 					else if (C5034B95.smethod_0("configGeneral").method_3("ckbUseExtensionProxy") && Directory.Exists(Commom.smethod_95() + "\\extension\\Proxy"))
 					{
@@ -1048,16 +1090,19 @@ public class Chrome
 				{
 					chromeOptions.AddArgument("--use-fake-ui-for-media-stream");
 				}
+				string driverExePath = IsolatedDriverManager.GetDriverExecutablePath(string.Empty);
+				string driverDirPath = Path.GetDirectoryName(driverExePath);
+				string driverFileName = Path.GetFileName(driverExePath);
 				try
 				{
-					Commom.PatchChromeDriverCdc(Commom.smethod_95() + "\\chromedriver.exe");
+					Commom.PatchChromeDriverCdc(driverExePath);
 				}
 				catch {}
-				ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService(Commom.smethod_95());
+				ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService(driverDirPath, driverFileName);
 				if (!string.IsNullOrEmpty(chromeOptions.BinaryLocation))
 				{
 					string directoryName = Path.GetDirectoryName(chromeOptions.BinaryLocation);
-					chromeDriverService = ((!File.Exists(directoryName + "\\chromedriver.exe")) ? ChromeDriverService.CreateDefaultService(Commom.smethod_95()) : ChromeDriverService.CreateDefaultService(directoryName));
+					chromeDriverService = ((!File.Exists(directoryName + "\\chromedriver.exe")) ? ChromeDriverService.CreateDefaultService(driverDirPath, driverFileName) : ChromeDriverService.CreateDefaultService(directoryName));
 				}
 				bool flag = C5034B95.smethod_0("configGeneral").method_3("ckbGologin") && String_1 != "";
 				bool flag2 = Class59.ED081E86();
@@ -1086,7 +1131,7 @@ public class Chrome
 								text7 = text7.Replace(value, String_0);
 							}
 							string value2 = Regex.Match(text7, "\"proxy\":.*?\\{.*?\\},", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.CultureInvariant).Value;
-							text7 = ((A3A32284.Split(':').Length != 4) ? text7.Replace(value2, "\"proxy\": { \"password\": \"\", \"username\": \"\" },") : text7.Replace(value2, "\"proxy\": { \"password\": \"" + A3A32284.Split(':')[3] + "\", \"username\": \"" + A3A32284.Split(':')[2] + "\" },"));
+							text7 = text7.Replace(value2, "\"proxy\": { \"password\": \"\", \"username\": \"\" },");
 							File.WriteAllText(text5, text7);
 							File.WriteAllText(text6, text7);
 						}
@@ -1104,7 +1149,7 @@ public class Chrome
 						{
 							class59_0 = new Class59(string_2);
 						}
-						class59_0.method_1(A3A32284, String_0);
+						class59_0.method_1((_proxyAuthTunnel != null && _proxyAuthTunnel.IsRunning) ? _proxyAuthTunnel.BoundAddress : A3A32284, String_0);
 					}
 				}
 				else
@@ -1117,7 +1162,7 @@ public class Chrome
 					{
 						Commom.E10A40B6(String_1 + "\\Default\\Preferences");
 					}
-					if (!C5034B95.smethod_0("configGeneral").method_3("ckbUseExtensionProxy") && A3A32284.Split(':').Length == 4)
+					if (!BenchmarkDisableExtensions && _proxyAuthTunnel == null && !C5034B95.smethod_0("configGeneral").method_3("ckbUseExtensionProxy") && A3A32284.Split(':').Length == 4)
 					{
 						if (File.Exists("extension\\proxy2.crx"))
 						{
@@ -1126,25 +1171,28 @@ public class Chrome
 					}
 				}
 				List<string> list2 = new List<string>();
-				if (!string.IsNullOrEmpty(proxyAuthExtensionDir) && Directory.Exists(proxyAuthExtensionDir))
+				if (!BenchmarkDisableExtensions)
 				{
-					list2.Add(proxyAuthExtensionDir);
-				}
-				if (C5034B95.smethod_0("configGeneral").method_3("ckbExtensionOmoCaptcha") && Directory.Exists("extension\\omocaptcha"))
-				{
-					list2.Add(Commom.smethod_95() + "\\extension\\omocaptcha");
-				}
-				if (AC20011A.Trim() != "")
-				{
-					List<string> list3 = Directory.GetDirectories(AC20011A).ToList();
-					for (int j = 0; j < list3.Count; j++)
+					if (!string.IsNullOrEmpty(proxyAuthExtensionDir) && Directory.Exists(proxyAuthExtensionDir))
 					{
-						list2.Add(Commom.smethod_95() + "\\" + list3[j]);
+						list2.Add(proxyAuthExtensionDir);
 					}
-				}
-				if (list2.Count > 0)
-				{
-					chromeOptions.AddArgument("--load-extension=" + string.Join(",", list2));
+					if (C5034B95.smethod_0("configGeneral").method_3("ckbExtensionOmoCaptcha") && Directory.Exists("extension\\omocaptcha"))
+					{
+						list2.Add(Commom.smethod_95() + "\\extension\\omocaptcha");
+					}
+					if (AC20011A.Trim() != "")
+					{
+						List<string> list3 = Directory.GetDirectories(AC20011A).ToList();
+						for (int j = 0; j < list3.Count; j++)
+						{
+							list2.Add(Commom.smethod_95() + "\\" + list3[j]);
+						}
+					}
+					if (list2.Count > 0)
+					{
+						chromeOptions.AddArgument("--load-extension=" + string.Join(",", list2));
+					}
 				}
 				if (flag2)
 				{
@@ -1175,8 +1223,72 @@ public class Chrome
 					chromeOptions.DebuggerAddress = class59_0.string_0;
 				}
 				chromeDriverService.HideCommandPromptWindow = true;
-				ChromeDriver_0 = new ChromeDriver(chromeDriverService, chromeOptions, TimeSpan.FromMinutes(3.0));
-				Process_1 = Process.GetProcessById(chromeDriverService.ProcessId);
+				Stopwatch swCreateBenchmark = null;
+				if (!string.IsNullOrEmpty(BenchmarkSessionId))
+				{
+					swCreateBenchmark = Stopwatch.StartNew();
+				}
+				try
+				{
+					ChromeDriver_0 = new ChromeDriver(chromeDriverService, chromeOptions, TimeSpan.FromMinutes(3.0));
+					Process_1 = Process.GetProcessById(chromeDriverService.ProcessId);
+
+					// Bind Windows Job Object for kernel-enforced child process tree cleanup
+					try
+					{
+						if (_jobObject == null)
+						{
+							_jobObject = new JobObject();
+						}
+						if (Process_1 != null)
+						{
+							_jobObject.AssignProcess(Process_1);
+							List<int> childPids = Commom.GetChildProcessIds(Process_1.Id);
+							foreach (int pid in childPids)
+							{
+								_jobObject.AssignProcess(pid);
+								if (Process_0 == null)
+								{
+									try
+									{
+										Process p = Process.GetProcessById(pid);
+										if (p.ProcessName.ToLower().Contains("chrome"))
+										{
+											Process_0 = p;
+										}
+									}
+									catch { }
+								}
+							}
+						}
+					}
+					catch { }
+
+					if (!string.IsNullOrEmpty(BenchmarkSessionId))
+					{
+						LushCare.Benchmark.SessionBenchmarkTelemetry.Instance.MarkCreateCompleted(BenchmarkSessionId, true);
+						LushCare.Benchmark.SessionBenchmarkTelemetry.Instance.SnapshotProcessTree(BenchmarkSessionId, chromeDriverService.ProcessId);
+					}
+				}
+				catch (Exception exCreate)
+				{
+					if (!string.IsNullOrEmpty(BenchmarkSessionId))
+					{
+						bool isTimeout = swCreateBenchmark != null && swCreateBenchmark.Elapsed.TotalSeconds >= 30.0;
+						if (isTimeout)
+						{
+							Stopwatch cleanupSw = Stopwatch.StartNew();
+							try { if (chromeDriverService.ProcessId > 0) Process.GetProcessById(chromeDriverService.ProcessId).Kill(); } catch { }
+							cleanupSw.Stop();
+							LushCare.Benchmark.SessionBenchmarkTelemetry.Instance.MarkCreateTimeout(BenchmarkSessionId, cleanupSw.Elapsed.TotalMilliseconds);
+						}
+						else
+						{
+							LushCare.Benchmark.SessionBenchmarkTelemetry.Instance.MarkCreateCompleted(BenchmarkSessionId, false, exCreate.Message);
+						}
+					}
+					throw;
+				}
 				ChromeDriver_0.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(3.0);
 				ChromeDriver_0.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(60.0);
 				ChromeDriver_0.Manage().Timeouts().AsynchronousJavaScript = TimeSpan.FromSeconds(60.0);
@@ -1314,25 +1426,9 @@ public class Chrome
 
 	private string CreateProxyAuthExtension(string host, int port, string user, string pass, int proxyType = 0)
 	{
-		try
-		{
-			string scheme = (proxyType == 1) ? "socks5" : "http";
-			string safeHost = host.Replace(".", "_").Replace(":", "_");
-			string extDir = Path.Combine(Commom.smethod_95(), "extension", "auth_" + safeHost + "_" + port);
-			if (!Directory.Exists(extDir))
-			{
-				Directory.CreateDirectory(extDir);
-			}
-			string manifest = "{\n  \"version\": \"1.0.0\",\n  \"manifest_version\": 2,\n  \"name\": \"LushCare Proxy Auth\",\n  \"permissions\": [\"proxy\", \"tabs\", \"unlimitedStorage\", \"storage\", \"<all_urls>\", \"webRequest\", \"webRequestBlocking\"],\n  \"background\": { \"scripts\": [\"background.js\"] },\n  \"minimum_chrome_version\": \"22.0.0\"\n}";
-			string bg = "var config = {\n  mode: 'fixed_servers',\n  rules: {\n    singleProxy: {\n      scheme: '" + scheme + "',\n      host: '" + host + "',\n      port: parseInt(" + port + ")\n    },\n    bypassList: ['localhost', '127.0.0.1']\n  }\n};\nchrome.proxy.settings.set({value: config, scope: 'regular'}, function() {});\nchrome.webRequest.onAuthRequired.addListener(\n  function(details) {\n    return {\n      authCredentials: {\n        username: '" + user + "',\n        password: '" + pass + "'\n      }\n    };\n  },\n  {urls: ['<all_urls>']},\n  ['blocking']\n);\n";
-			File.WriteAllText(Path.Combine(extDir, "manifest.json"), manifest);
-			File.WriteAllText(Path.Combine(extDir, "background.js"), bg);
-			return extDir;
-		}
-		catch
-		{
-			return "";
-		}
+		// SEC-P0-01 & SEC-P0-02: Eliminated writing manifest.json / background.js with plaintext credentials.
+		// All authenticated proxies are routed in-memory via ProxyAuthTunnel.
+		return "";
 	}
 
 	private void ApplyStealthCDP()
@@ -2988,8 +3084,19 @@ public class Chrome
 		}
 		try
 		{
+			if (_jobObject != null)
+			{
+				_jobObject.Dispose();
+				_jobObject = null;
+			}
+		}
+		catch
+		{
+		}
+		try
+		{
 			// Diet sach toan bo cay tien trinh Chrome va ChromeDriver bang taskkill /T /F chong orphan
-			if (Process_1 != null)
+			if (Process_1 != null && !Process_1.HasExited)
 			{
 				try
 				{
@@ -3022,6 +3129,24 @@ public class Chrome
 		Process_0 = null;
 		Process_1 = null;
 		Boolean_5 = true;
+		try
+		{
+			if (_proxyAuthTunnel != null)
+			{
+				_proxyAuthTunnel.Dispose();
+				_proxyAuthTunnel = null;
+			}
+		}
+		catch { }
+		try
+		{
+			if (!string.IsNullOrEmpty(_sessionProxyAuthDir) && Directory.Exists(_sessionProxyAuthDir))
+			{
+				Directory.Delete(_sessionProxyAuthDir, recursive: true);
+				_sessionProxyAuthDir = null;
+			}
+		}
+		catch { }
 		try
 		{
 			if (!string.IsNullOrEmpty(String_1))
@@ -3126,6 +3251,18 @@ public class Chrome
 								{
 									File.SetAttributes(tmpFile, FileAttributes.Normal);
 									File.Delete(tmpFile);
+								}
+							}
+							catch (IOException)
+							{
+								try
+								{
+									Thread.Sleep(50);
+									File.SetAttributes(tmpFile, FileAttributes.Normal);
+									File.Delete(tmpFile);
+								}
+								catch
+								{
 								}
 							}
 							catch
@@ -3246,6 +3383,18 @@ public class Chrome
 						File.Delete(file);
 					}
 				}
+				catch (IOException)
+				{
+					try
+					{
+						Thread.Sleep(50);
+						File.SetAttributes(file, FileAttributes.Normal);
+						File.Delete(file);
+					}
+					catch
+					{
+					}
+				}
 				catch
 				{
 				}
@@ -3273,6 +3422,17 @@ public class Chrome
 						Directory.Delete(subDir, false);
 					}
 				}
+				catch (IOException)
+				{
+					try
+					{
+						Thread.Sleep(50);
+						Directory.Delete(subDir, false);
+					}
+					catch
+					{
+					}
+				}
 				catch
 				{
 				}
@@ -3281,6 +3441,17 @@ public class Chrome
 			try
 			{
 				Directory.Delete(dirPath, false);
+			}
+			catch (IOException)
+			{
+				try
+				{
+					Thread.Sleep(50);
+					Directory.Delete(dirPath, false);
+				}
+				catch
+				{
+				}
 			}
 			catch
 			{
@@ -13382,4 +13553,92 @@ public class Chrome
 	{
 		return PageCreationHub.CreatePage(this, string_10, string_11, bio, website, phone, email, address, city, zip, avatar, cover, targetUid, log, autoPostProcess: true);
 	}
+
+	#region Benchmark Extensions & Wrappers
+	public string BenchmarkSessionId { get; set; }
+	public string UserDataDir
+	{
+		get { return String_1; }
+		set { String_1 = value; }
+	}
+	public bool BenchmarkClearCacheOnStart { get; set; }
+	public bool BenchmarkDisableGpu { get; set; }
+	public int BenchmarkRendererProcessLimit { get; set; }
+	public bool BenchmarkDisableImages { get; set; }
+	public bool BenchmarkDisableExtensions { get; set; }
+
+	public bool Open()
+	{
+		var res = method_0();
+		return res.success;
+	}
+
+	public void GotoURL(string url)
+	{
+		method_12(url);
+	}
+
+	public object ExecuteScript(string script)
+	{
+		return (ChromeDriver_0 != null) ? ChromeDriver_0.ExecuteScript(script) : null;
+	}
+
+	public void MinimizeWindow()
+	{
+		try
+		{
+			if (Process_0 != null && Process_0.MainWindowHandle != IntPtr.Zero)
+			{
+				User32Helper.ShowWindow(Process_0.MainWindowHandle, 6);
+			}
+		}
+		catch { }
+		try
+		{
+			if (ChromeDriver_0 != null)
+			{
+				ChromeDriver_0.Manage().Window.Position = new Point(-32000, -32000);
+			}
+		}
+		catch { }
+	}
+
+	public void SetWindowVisible(int width = 1024, int height = 768)
+	{
+		try
+		{
+			if (Process_0 != null && Process_0.MainWindowHandle != IntPtr.Zero)
+			{
+				User32Helper.ShowWindow(Process_0.MainWindowHandle, 9);
+			}
+		}
+		catch { }
+		try
+		{
+			if (ChromeDriver_0 != null)
+			{
+				ChromeDriver_0.Manage().Window.Position = new Point(0, 0);
+				ChromeDriver_0.Manage().Window.Size = new Size(width, height);
+			}
+		}
+		catch { }
+	}
+
+	public void Close()
+	{
+		try
+		{
+			A4B307B3();
+		}
+		catch
+		{
+			try { method_13(); } catch { }
+		}
+	}
+
+	public void Dispose()
+	{
+		Close();
+	}
+	#endregion
 }
