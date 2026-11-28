@@ -23,6 +23,11 @@ public class Chrome : IDisposable
     internal JobObject _jobObject;
     public JobObject JobObject => _jobObject;
 
+    internal int _sessionProcess1Id;
+    internal DateTime? _sessionProcess1StartTime;
+    internal int _sessionProcess0Id;
+    internal DateTime? _sessionProcess0StartTime;
+
     public bool PreserveSession { get; set; }
     public bool ManualSessionLogin { get; set; }
 	[StructLayout(LayoutKind.Auto)]
@@ -230,6 +235,15 @@ public class Chrome : IDisposable
 		set
 		{
 			process_0 = value;
+			if (value != null)
+			{
+				try
+				{
+					_sessionProcess0Id = value.Id;
+					_sessionProcess0StartTime = value.StartTime;
+				}
+				catch { }
+			}
 		}
 	}
 
@@ -244,6 +258,15 @@ public class Chrome : IDisposable
 		set
 		{
 			process_1 = value;
+			if (value != null)
+			{
+				try
+				{
+					_sessionProcess1Id = value.Id;
+					_sessionProcess1StartTime = value.StartTime;
+				}
+				catch { }
+			}
 		}
 	}
 
@@ -3093,34 +3116,52 @@ public class Chrome : IDisposable
 		catch
 		{
 		}
+
+		// Sau khi dong Job Object, cho co gioi han de tien trinh thuoc phien thoat tu nhien
 		try
 		{
-			// Diet sach toan bo cay tien trinh Chrome va ChromeDriver bang taskkill /T /F chong orphan
-			if (Process_1 != null && !Process_1.HasExited)
+			Stopwatch swWaitExit = Stopwatch.StartNew();
+			while (swWaitExit.ElapsedMilliseconds < 2000)
 			{
-				try
+				bool p1Alive = false;
+				bool p0Alive = false;
+				try { p1Alive = Process_1 != null && !Process_1.HasExited; } catch { }
+				try { p0Alive = Process_0 != null && !Process_0.HasExited; } catch { }
+
+				if (!p1Alive && !p0Alive)
 				{
-					int p1Id = Process_1.Id;
-					if (!Process_1.HasExited)
-					{
-						var psi = new ProcessStartInfo("taskkill", $"/pid {p1Id} /T /F") { CreateNoWindow = true, UseShellExecute = false };
-						Process.Start(psi)?.WaitForExit(1500);
-					}
+					break;
 				}
-				catch {}
+				Thread.Sleep(50);
 			}
-			if (Process_0 != null)
+		}
+		catch
+		{
+		}
+
+		// Chi chay fallback taskkill neu tien trinh van con song va DA XAC MINH thuoc phien.
+		// HasExited rieng le chua du de xac minh quyen so huu (phong ngua PID recycling va tranh anh huong Chrome ngoai phien).
+		try
+		{
+			if (JobObject.IsSessionProcessStillAliveAndOwned(Process_1, _sessionProcess1Id, _sessionProcess1StartTime, "chromedriver"))
 			{
 				try
 				{
-					int p0Id = Process_0.Id;
-					if (!Process_0.HasExited)
-					{
-						var psi = new ProcessStartInfo("taskkill", $"/pid {p0Id} /T /F") { CreateNoWindow = true, UseShellExecute = false };
-						Process.Start(psi)?.WaitForExit(1500);
-					}
+					int p1Id = Process_1 != null ? Process_1.Id : _sessionProcess1Id;
+					var psi = new ProcessStartInfo("taskkill", $"/pid {p1Id} /T /F") { CreateNoWindow = true, UseShellExecute = false };
+					Process.Start(psi)?.WaitForExit(1500);
 				}
-				catch {}
+				catch { }
+			}
+			if (JobObject.IsSessionProcessStillAliveAndOwned(Process_0, _sessionProcess0Id, _sessionProcess0StartTime, "chrome"))
+			{
+				try
+				{
+					int p0Id = Process_0 != null ? Process_0.Id : _sessionProcess0Id;
+					var psi = new ProcessStartInfo("taskkill", $"/pid {p0Id} /T /F") { CreateNoWindow = true, UseShellExecute = false };
+					Process.Start(psi)?.WaitForExit(1500);
+				}
+				catch { }
 			}
 		}
 		catch

@@ -5,4 +5,4 @@
 Tests\TestStage3Lifecycle.cs
 Browser\JobObject.cs
 Browser\IsolatedDriverManager.cs
-Support\CommomStub.cs
+Tests\CommomStub.cs

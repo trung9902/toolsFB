@@ -208,6 +208,98 @@ namespace LushCare.Browser
             }
         }
 
+        /// <summary>
+        /// Chờ có giới hạn (bounded wait) cho một tiến trình thoát tự nhiên.
+        /// </summary>
+        public static bool WaitForProcessExitBounded(Process process, int timeoutMs = 2000)
+        {
+            if (process == null) return true;
+            try
+            {
+                if (process.HasExited) return true;
+                return process.WaitForExit(timeoutMs);
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Xác minh tiến trình có còn sống và thực sự thuộc về phiên làm việc này hay không.
+        /// Chống hiện tượng PID recycling (hệ điều hành cấp lại PID của tiến trình đã chết cho tiến trình khác).
+        /// HasExited riêng lẻ chưa đủ để xác minh quyền sở hữu.
+        /// </summary>
+        public static bool IsSessionProcessStillAliveAndOwned(Process process, int recordedPid, DateTime? recordedStartTime, string expectedNameKeyword = null)
+        {
+            int targetPid = (process != null) ? process.Id : recordedPid;
+            if (targetPid <= 0) return false;
+
+            try
+            {
+                if (process != null)
+                {
+                    try
+                    {
+                        if (process.HasExited) return false;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+
+                Process current = Process.GetProcessById(targetPid);
+                if (current == null) return false;
+
+                try
+                {
+                    if (current.HasExited) return false;
+                }
+                catch
+                {
+                    return false;
+                }
+
+                // 1. Xác minh tên tiến trình khớp mong đợi (chống diệt nhầm process khác loại)
+                if (!string.IsNullOrEmpty(expectedNameKeyword))
+                {
+                    string actualName = current.ProcessName.ToLowerInvariant();
+                    if (!actualName.Contains(expectedNameKeyword.ToLowerInvariant()))
+                    {
+                        return false;
+                    }
+                }
+
+                // 2. Xác minh thời điểm khởi tạo (StartTime) để bảo đảm đúng phiên, chống PID recycling
+                if (recordedStartTime.HasValue)
+                {
+                    try
+                    {
+                        if (Math.Abs((current.StartTime - recordedStartTime.Value).TotalSeconds) > 1.0)
+                        {
+                            return false; // PID đã bị tiến trình khác ngoài phiên chiếm giữ
+                        }
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                // Tiến trình không tồn tại (đã thoát)
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public void Dispose()
         {
             Dispose(true);

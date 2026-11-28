@@ -24,6 +24,7 @@ namespace LushCare.Tests
             SubTest_JobObject_NormalExit();
             SubTest_JobObject_TimeoutCleanup();
             SubTest_JobObject_HardTermination();
+            SubTest_ExternalProcess_NotAffectedByCleanup();
 
             Console.WriteLine();
             Console.WriteLine("================================================================================");
@@ -275,6 +276,46 @@ class Program
 
             Assert(childKilledByKernel, "Dừng app đột ngột (Hard Termination): Kernel tự động hủy tiến trình con",
                 string.Format("- Child PID {0} đã bị Kernel tiêu diệt ngay khi Process Cha bị Kill đột ngột, 0 tiến trình mồ côi", childPid));
+        }
+
+        static void SubTest_ExternalProcess_NotAffectedByCleanup()
+        {
+            // Giả lập một tiến trình Chrome/ứng dụng bên ngoài phiên đang chạy
+            ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", "/c ping -n 8 127.0.0.1 >nul")
+            {
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+            Process externalProcess = Process.Start(psi);
+            int extPid = externalProcess.Id;
+
+            // 1. Kiểm tra xác minh: HasExited riêng lẻ không đủ
+            // Tiến trình đang sống, nhưng khác tên kỳ vọng ("chrome" vs "cmd")
+            bool rejectedWrongName = !JobObject.IsSessionProcessStillAliveAndOwned(externalProcess, extPid, externalProcess.StartTime, "chrome");
+
+            // 2. Tiến trình đúng tên nhưng sai StartTime (mô phỏng PID recycling từ phiên cũ)
+            DateTime simulatedOldStartTime = DateTime.Now.AddHours(-2);
+            bool rejectedWrongStartTime = !JobObject.IsSessionProcessStillAliveAndOwned(externalProcess, extPid, simulatedOldStartTime, "cmd");
+
+            // 3. Tiến trình không tồn tại (PID ma)
+            bool rejectedNonExistent = !JobObject.IsSessionProcessStillAliveAndOwned(null, 9999999, null, "chrome");
+
+            // 4. Mô phỏng luồng dọn dẹp: Vì xác minh quyền sở hữu trả về false, logic taskkill không được kích hoạt
+            if (JobObject.IsSessionProcessStillAliveAndOwned(externalProcess, extPid, simulatedOldStartTime, "chrome"))
+            {
+                try { externalProcess.Kill(); } catch { }
+            }
+
+            // 5. Kiểm tra tiến trình bên ngoài vẫn còn sống và không hề bị ảnh hưởng
+            bool externalStillAlive = !externalProcess.HasExited;
+
+            // Dọn dẹp tiến trình giả lập
+            try { externalProcess.Kill(); } catch { }
+
+            bool allPassed = rejectedWrongName && rejectedWrongStartTime && rejectedNonExistent && externalStillAlive;
+
+            Assert(allPassed, "Xác minh Chrome ngoài phiên không bị ảnh hưởng (Chống PID recycling)",
+                string.Format("- External PID {0} được bảo toàn nguyên vẹn, HasExited kết hợp StartTime ngăn chặn triệt để diệt nhầm ngoài phiên", extPid));
         }
     }
 }
