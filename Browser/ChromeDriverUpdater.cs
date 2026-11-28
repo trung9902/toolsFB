@@ -1,4 +1,5 @@
 using System;
+using LushCare.Browser;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -252,14 +253,20 @@ public static class ChromeDriverUpdater
             }
 
             string sourceDriver = foundDrivers[0];
-            string destDriver = Path.Combine(targetDir, "chromedriver.exe");
 
+            // Use IsolatedDriverManager for version-isolated, conflict-free atomic staging update
+            try
+            {
+                IsolatedDriverManager.SafeUpdateDriver(chromeVersion, sourceDriver);
+            }
+            catch { }
+
+            string destDriver = Path.Combine(targetDir, "chromedriver.exe");
             if (File.Exists(destDriver))
             {
                 try { File.Delete(destDriver); } catch { }
             }
-
-            File.Copy(sourceDriver, destDriver, true);
+            try { File.Copy(sourceDriver, destDriver, true); } catch { }
             try { Commom.PatchChromeDriverCdc(destDriver); } catch { }
 
             // Also copy to bin/Debug/net48 and bin/Release/net48 if in project directory

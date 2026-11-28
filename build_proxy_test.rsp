@@ -1,0 +1,8 @@
+/r:C:\Users\Admin\.nuget\packages\microsoft.net.compilers\3.9.0\tools\System.Buffers.dll
+/target:exe
+/define:PROXY_TEST_ONLY
+/out:Tests\TestProxySecurity.exe
+Tests\TestModuleVerification.cs
+Tests\TestProxyAuthSecuritySuite.cs
+Browser\ProxyAuthTunnel.cs
+Support\BufferPool.cs
