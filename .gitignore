@@ -29,6 +29,9 @@ error.txt
 bin.txt
 chromedriver.exe*
 *.pdb
+*.exe
+*.dll
+packages/
 push_to_github.bat
 
 ## User Runtime Data & Databases (Keep software 100% clean/empty for new downloads)
