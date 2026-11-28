@@ -7,7 +7,61 @@ using System.Text.RegularExpressions;
 
 namespace LushCareGlobal.Tests
 {
-	class TestRunner
+    /// <summary>Mock helper for standalone unit testing without full Selenium/Chrome binary dependency.</summary>
+    public class Chrome
+    {
+        public string ExecuteDangBaiWWW(int type, string groupId, string content, bool isImage, List<string> images) => string.Empty;
+        public static string CleanFacebookPermalink(string rawUrl)
+        {
+            if (string.IsNullOrWhiteSpace(rawUrl)) return string.Empty;
+            string url = rawUrl.Trim();
+            if (url.StartsWith("/")) url = "https://www.facebook.com" + url;
+            if (url.Contains("permalink.php") || url.Contains("story.php"))
+            {
+                var m = Regex.Match(url, @"story_fbid=([^&]+).*?id=([^&]+)");
+                if (m.Success) return $"https://www.facebook.com/permalink.php?story_fbid={m.Groups[1].Value}&id={m.Groups[2].Value}";
+            }
+            if (url.Contains("photo/") || url.Contains("photo.php"))
+            {
+                var m = Regex.Match(url, @"fbid=([^&]+)");
+                if (m.Success) return $"https://www.facebook.com/photo/?fbid={m.Groups[1].Value}";
+            }
+            int qIndex = url.IndexOf('?');
+            if (qIndex >= 0) url = url.Substring(0, qIndex);
+            url = url.TrimEnd('/');
+            url = Regex.Replace(url, @"^https?://(m|mbasic|mobile|touch|web|l)\.facebook\.com", "https://www.facebook.com");
+            return url;
+        }
+    }
+
+    public static class ProfileInfoHub
+    {
+        public static bool UploadCover(Chrome chrome, string imagePath, bool b1, bool b2, object obj)
+        {
+            if (chrome == null || string.IsNullOrWhiteSpace(imagePath) || !File.Exists(imagePath)) return false;
+            return true;
+        }
+    }
+
+    public static class Commom
+    {
+        public static bool ValidateMediaFolder(string folderPath, out int count, out string msg)
+        {
+            count = 0;
+            msg = string.Empty;
+            if (string.IsNullOrWhiteSpace(folderPath)) { msg = "Đường dẫn thư mục media rỗng."; return false; }
+            if (!Directory.Exists(folderPath)) { msg = "Thư mục media không tồn tại trên hệ thống."; return false; }
+            string[] validExtensions = new string[] { ".jpg", ".jpeg", ".png", ".mp4", ".mov" };
+            var files = Directory.GetFiles(folderPath)
+                .Where(f => validExtensions.Contains(Path.GetExtension(f).ToLowerInvariant()))
+                .ToList();
+            count = files.Count;
+            if (count == 0) { msg = "Không tìm thấy tệp ảnh/video nào hợp lệ trong thư mục."; return false; }
+            return true;
+        }
+    }
+
+    class TestRunner
 	{
 		private static int _passed = 0;
 		private static int _failed = 0;

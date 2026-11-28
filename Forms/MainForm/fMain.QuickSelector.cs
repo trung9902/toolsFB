@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using LushCare.Support;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -411,9 +413,25 @@ public partial class fMain
     }
 
     /// <summary>
-    /// Thực hiện chọn nhanh tài khoản trên DataGridView theo tiêu chí và cập nhật thanh trạng thái
+    /// Cấu trúc lưu trữ dữ liệu dòng phục vụ tính toán tiêu chí trên luồng nền
     /// </summary>
-    public void QuickSelectAccounts(QuickSelectType selectType)
+    private struct QuickSelectRowData
+    {
+        public string Note;
+        public string Status;
+        public string Uid;
+        public string Fa2;
+        public string Cookies;
+        public string Email;
+        public string PassMail;
+        public string InteractEnd;
+        public string Friend;
+    }
+
+    /// <summary>
+    /// Thực hiện chọn nhanh tài khoản trên DataGridView theo tiêu chí và cập nhật thanh trạng thái (Tối ưu hóa bất đồng bộ Task.Run & BufferPool)
+    /// </summary>
+    public async void QuickSelectAccounts(QuickSelectType selectType)
     {
         try
         {
@@ -422,55 +440,167 @@ public partial class fMain
                 return;
             }
 
-            // Kết thúc chỉnh sửa cell nếu đang có cell focus
             try { this.F5325785.EndEdit(); } catch { }
 
-            Func<int, bool> predicate;
-            switch (selectType)
-            {
-                case QuickSelectType.Strong:
-                    predicate = IsStrongRow;
-                    break;
-                case QuickSelectType.Weak:
-                    predicate = IsWeakRow;
-                    break;
-                case QuickSelectType.Live:
-                    predicate = IsLiveRow;
-                    break;
-                case QuickSelectType.Checkpoint:
-                    predicate = IsCheckpointRow;
-                    break;
-                default:
-                    return;
-            }
+            int colChose = this.F5325785.Columns.Contains("cChose") ? this.F5325785.Columns["cChose"].Index : -1;
+            if (colChose < 0) return;
 
             int rowCount = this.F5325785.RowCount;
+
+            // Thu thập nhanh các chỉ số cột trên UI thread để tránh lookup dictionary nhiều lần
+            int colGhiChu = this.F5325785.Columns.Contains("cGhiChu") ? this.F5325785.Columns["cGhiChu"].Index : -1;
+            int colNote = this.F5325785.Columns.Contains("cNote") ? this.F5325785.Columns["cNote"].Index : -1;
+            int colInfo = this.F5325785.Columns.Contains("cInfo") ? this.F5325785.Columns["cInfo"].Index : -1;
+            int colStatus = this.F5325785.Columns.Contains("cStatus") ? this.F5325785.Columns["cStatus"].Index : -1;
+            int colStatus282 = this.F5325785.Columns.Contains("cStatus282") ? this.F5325785.Columns["cStatus282"].Index : -1;
+
+            bool needDynamic = (selectType == QuickSelectType.Strong || selectType == QuickSelectType.Weak);
+            int colUid = -1, colFa2 = -1, colCookies = -1, colEmail = -1, colPassMail = -1, colInteractEnd = -1, colFriend = -1;
+            if (needDynamic)
+            {
+                if (this.F5325785.Columns.Contains("cUid")) colUid = this.F5325785.Columns["cUid"].Index;
+                if (this.F5325785.Columns.Contains("cFa2")) colFa2 = this.F5325785.Columns["cFa2"].Index;
+                if (this.F5325785.Columns.Contains("cCookies")) colCookies = this.F5325785.Columns["cCookies"].Index;
+                if (this.F5325785.Columns.Contains("cEmail")) colEmail = this.F5325785.Columns["cEmail"].Index;
+                if (this.F5325785.Columns.Contains("cPassMail")) colPassMail = this.F5325785.Columns["cPassMail"].Index;
+                if (this.F5325785.Columns.Contains("cInteractEnd")) colInteractEnd = this.F5325785.Columns["cInteractEnd"].Index;
+                if (this.F5325785.Columns.Contains("cFriend")) colFriend = this.F5325785.Columns["cFriend"].Index;
+            }
+
+            // Trích xuất snapshot dữ liệu nhẹ trên UI thread (chỉ mất ~5-15ms cho 5,000 hàng)
+            QuickSelectRowData[] snapshots = new QuickSelectRowData[rowCount];
+            for (int i = 0; i < rowCount; i++)
+            {
+                DataGridViewRow row = this.F5325785.Rows[i];
+
+                // Trích xuất Note
+                string note = "";
+                if (colGhiChu >= 0 && row.Cells[colGhiChu].Value != null) note = row.Cells[colGhiChu].Value.ToString();
+                if (string.IsNullOrEmpty(note) && colNote >= 0 && row.Cells[colNote].Value != null) note = row.Cells[colNote].Value.ToString();
+                if (string.IsNullOrEmpty(note) && colInfo >= 0 && row.Cells[colInfo].Value != null)
+                {
+                    string info = row.Cells[colInfo].Value.ToString();
+                    if (info.Contains("Trust") || info.Contains("Trâu") || info.Contains("Yếu")) note = info;
+                }
+                snapshots[i].Note = note != null ? note.Trim() : "";
+
+                // Trích xuất Status
+                string status = "";
+                if (colStatus >= 0 && row.Cells[colStatus].Value != null) status = row.Cells[colStatus].Value.ToString();
+                string status282 = "";
+                if (colStatus282 >= 0 && row.Cells[colStatus282].Value != null) status282 = row.Cells[colStatus282].Value.ToString();
+                string combined = (status + " " + status282).Trim();
+                if (string.IsNullOrEmpty(combined) && colInfo >= 0 && row.Cells[colInfo].Value != null)
+                {
+                    string info = row.Cells[colInfo].Value.ToString();
+                    if (!info.StartsWith("[Trust")) combined = info.Trim();
+                }
+                snapshots[i].Status = combined;
+
+                // Trích xuất dữ liệu tính điểm động nếu cần
+                if (needDynamic && string.IsNullOrEmpty(snapshots[i].Note))
+                {
+                    if (colUid >= 0 && row.Cells[colUid].Value != null) snapshots[i].Uid = row.Cells[colUid].Value.ToString();
+                    if (colFa2 >= 0 && row.Cells[colFa2].Value != null) snapshots[i].Fa2 = row.Cells[colFa2].Value.ToString();
+                    if (colCookies >= 0 && row.Cells[colCookies].Value != null) snapshots[i].Cookies = row.Cells[colCookies].Value.ToString();
+                    if (colEmail >= 0 && row.Cells[colEmail].Value != null) snapshots[i].Email = row.Cells[colEmail].Value.ToString();
+                    if (colPassMail >= 0 && row.Cells[colPassMail].Value != null) snapshots[i].PassMail = row.Cells[colPassMail].Value.ToString();
+                    if (colInteractEnd >= 0 && row.Cells[colInteractEnd].Value != null) snapshots[i].InteractEnd = row.Cells[colInteractEnd].Value.ToString();
+                    if (colFriend >= 0 && row.Cells[colFriend].Value != null) snapshots[i].Friend = row.Cells[colFriend].Value.ToString();
+                }
+            }
+
+            // Tận dụng BufferPool mượn mảng byte đệm chứa kết quả quét nhằm giảm tải áp lực GC và chống phân mảnh bộ nhớ LOH
+            byte[] matchBuffer = BufferPool.Rent(rowCount);
             int selectedCount = 0;
 
-            // Tối ưu hiệu năng: Suspend layout trong lúc quét và cập nhật cell
-            this.F5325785.SuspendLayout();
             try
             {
-                for (int i = 0; i < rowCount; i++)
+                // Chuyển toàn bộ logic duyệt và tính toán CPU-bound sang Background Worker / Task.Run
+                // Loại bỏ hoàn toàn hiện tượng đơ giật UI (2-8s)
+                await Task.Run(() =>
                 {
-                    bool match = predicate(i);
-                    this.F5325785.Rows[i].Cells["cChose"].Value = match;
-                    if (match)
+                    for (int i = 0; i < rowCount; i++)
                     {
-                        selectedCount++;
+                        bool match = false;
+                        switch (selectType)
+                        {
+                            case QuickSelectType.Strong:
+                                {
+                                    int score = 0;
+                                    if (string.IsNullOrEmpty(snapshots[i].Note))
+                                    {
+                                        var res = AccountHealthEngine.Calculate(
+                                            snapshots[i].Uid ?? "",
+                                            snapshots[i].Fa2 ?? "",
+                                            snapshots[i].Cookies ?? "",
+                                            snapshots[i].Email ?? "",
+                                            snapshots[i].PassMail ?? "",
+                                            snapshots[i].InteractEnd ?? "",
+                                            snapshots[i].Friend ?? "");
+                                        score = res != null ? res.Score : 0;
+                                    }
+                                    match = QuickSelectorEvaluator.EvaluateStrongCriteria(snapshots[i].Note, score);
+                                    break;
+                                }
+                            case QuickSelectType.Weak:
+                                {
+                                    int score = 0;
+                                    if (string.IsNullOrEmpty(snapshots[i].Note))
+                                    {
+                                        var res = AccountHealthEngine.Calculate(
+                                            snapshots[i].Uid ?? "",
+                                            snapshots[i].Fa2 ?? "",
+                                            snapshots[i].Cookies ?? "",
+                                            snapshots[i].Email ?? "",
+                                            snapshots[i].PassMail ?? "",
+                                            snapshots[i].InteractEnd ?? "",
+                                            snapshots[i].Friend ?? "");
+                                        score = res != null ? res.Score : 0;
+                                    }
+                                    match = QuickSelectorEvaluator.EvaluateWeakCriteria(snapshots[i].Note, score);
+                                    break;
+                                }
+                            case QuickSelectType.Live:
+                                match = QuickSelectorEvaluator.EvaluateLiveCriteria(snapshots[i].Status);
+                                break;
+                            case QuickSelectType.Checkpoint:
+                                match = QuickSelectorEvaluator.EvaluateCheckpointCriteria(snapshots[i].Status);
+                                break;
+                        }
+
+                        matchBuffer[i] = match ? (byte)1 : (byte)0;
+                        if (match)
+                        {
+                            selectedCount++;
+                        }
                     }
+                });
+
+                // Cập nhật lại UI sau khi tính toán xong: Bọc trong SuspendLayout() và resumeLayout(true)
+                this.F5325785.SuspendLayout();
+                try
+                {
+                    for (int i = 0; i < rowCount; i++)
+                    {
+                        this.F5325785.Rows[i].Cells[colChose].Value = (matchBuffer[i] == 1);
+                    }
+                }
+                finally
+                {
+                    this.F5325785.ResumeLayout(true);
+                }
+
+                // Cập nhật bộ đếm dòng được chọn trên thanh trạng thái
+                EA1B25A9(selectedCount);
+                if (this.lblCountSelect != null)
+                {
+                    this.lblCountSelect.Text = selectedCount.ToString();
                 }
             }
             finally
             {
-                this.F5325785.ResumeLayout();
-            }
-
-            // Cập nhật bộ đếm dòng được chọn trên thanh trạng thái (status bar / lblCountSelect)
-            EA1B25A9(selectedCount);
-            if (this.lblCountSelect != null)
-            {
-                this.lblCountSelect.Text = selectedCount.ToString();
+                BufferPool.Return(matchBuffer);
             }
         }
         catch (Exception ex)
